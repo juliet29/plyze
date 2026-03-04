@@ -40,7 +40,7 @@ class JPGraph(nx.Graph):
     def jpnodes(self):
         # NOTE: THIS SHOULD BE READ ONLY -> by virtue of being a propety it is read-only
         nodes = self.nodes(data=True)
-        res = [JPNode(i, data["data"]) for i, data in nodes]
+        res = [JPNode(name=i, data=data_["data"]) for i, data_ in nodes]
         return res
 
     def update_jpnode(self, name: str, data: JPNodeData):
@@ -50,6 +50,16 @@ class JPGraph(nx.Graph):
         # return res
         #
 
-    def get_jpnode(self, name: str):
+    def get_jpnode_by_name(self, name: str):
         node = get_unique_one(self.jpnodes, lambda node: node.name == name)
         return node
+
+    def show(self):
+        levels = set([i.data.level for i in self.jpnodes])
+        s = "\n"
+        for level in levels:
+            if level >= 0:
+                nodes = [i.name for i in self.jpnodes if i.data.level == level]
+                info = f"{level}: {",".join(nodes)}\n"
+                s += info
+        return s

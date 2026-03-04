@@ -4,7 +4,7 @@ import altair as alt
 
 from cyclopts import App
 
-from plys.jpg.main import idf_to_jpgraph
+from plys.jpg.main import idf_to_jpgraph, set_levels
 from plys.utils import CaseData
 from plys.paths import ProjectPaths
 from plys.qoi.bivar_plots import bivar_plot, multi_bivar_plot
@@ -139,7 +139,10 @@ def plot_bivar_multi():
 
 @app.command()
 def jpgraph():
-    return idf_to_jpgraph(*cd, datetime_=datetime(2017, 7, 1, 12))
+    jpg = idf_to_jpgraph(*cd, datetime_=datetime(2017, 7, 1, 12))
+    logger.debug(jpg.show())
+    set_levels(jpg)
+    logger.debug(jpg.show())
 
 
 ### ------- END COMMANDS ---------

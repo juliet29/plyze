@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from functools import partial
 from typing import Callable, Literal, NamedTuple
-from loguru import logger
 from plan2eplus.results.collections import SpaceTypesLiteral
 from utils4plans.lists import sort_and_group_objects
 import xarray as xr
@@ -62,18 +61,19 @@ def default_custom_qoi_fx(
 
 # OTHER FUNCTIONS --- > Modifying the xarray dataarray in some more complex way...
 #
+def find_drn(space_name: str):
+    pattern = re.compile("(NORTH)|(SOUTH)|(EAST)|(WEST)")
+    res = pattern.search(space_name.upper())
+    if res:
+        return res.group()
+    else:
+        raise ValueError(
+            f"External node name {space_name} does not contain a direction!"
+        )
+
+
 def get_wind_pressure_unique_external_nodes(sql_path: Path):
     wind_pressure = get_qoi("AFN Node Wind Pressure", sql_path).data_arr
-
-    def find_drn(space_name: str):
-        logger.debug(space_name)
-        pattern = re.compile("(NORTH)|(SOUTH)|(EAST)|(WEST)")
-        res = pattern.search(space_name.upper())
-        if res:
-            logger.debug(res.group())
-            return res.group()
-        else:
-            raise ValueError(f"{space_name} does not contain a direction!")
 
     grouped_space_names = sort_and_group_objects(
         wind_pressure.space_names.to_series().to_list(), lambda x: find_drn(x)
