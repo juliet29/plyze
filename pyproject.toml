@@ -13,6 +13,7 @@ dependencies = [
   "networkx>=3.6.1",
   "plan2eplus>=0.1.5",
   "ptpython>=3.0.32",
+  "scikit-learn>=1.8.0",
   "xarray>=2026.2.0",
 ]
 

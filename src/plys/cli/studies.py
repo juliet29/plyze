@@ -1,9 +1,11 @@
 from utils4plans.logconfig import logset
+from sklearn.datasets import load_iris
 from datetime import datetime
 import altair as alt
 
 from cyclopts import App
 
+from plys.classify.main import fit_neighbors, show_neighbors_one
 from plys.jpg.main import idf_to_jpgraph, set_levels
 from plys.utils import CaseData
 from plys.paths import ProjectPaths
@@ -59,25 +61,12 @@ def multidata():
         ProjectPaths.sample_sql,
     )
     return df
-    # logger.debug(df.columns)
-    # logger.debug(df)
 
 
 @app.command()
 def carrier():
-    # wp = get_wind_pressure_unique_external_nodes(cd.sql)
-    # logger.debug(wp.space_names)
-    #
-    # wp.plot.line(x="datetimes")
-    # plt.show()
 
     return QOIandData(QOIRegistry.custom.unique_wind_pressure, cd.sql).original_arr
-    # return to_data(
-    #     QOIRegistry.custom.combined_volume,
-    #     ProjectPaths.sample_idf,
-    #     ProjectPaths.sample_sql,
-    # )
-    # return wp
 
 
 ### ------- SINGLE PLOTS
@@ -143,6 +132,15 @@ def jpgraph():
     logger.debug(jpg.show())
     set_levels(jpg)
     logger.debug(jpg.show())
+
+
+### --- CLASSIFICATION ----
+@app.command()
+def kn():
+    iris = load_iris(as_frame=True)
+    X = iris.data[["sepal length (cm)"]].to_numpy()
+    model = fit_neighbors(X, 3)
+    return show_neighbors_one(model, [[1]])
 
 
 ### ------- END COMMANDS ---------
