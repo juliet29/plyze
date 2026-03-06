@@ -79,4 +79,6 @@ def idf_to_jpgraph(idf_path: Path, sql_path: Path, datetime_: datetime):
     G.add_jpnodes(jpnodes)
     G.add_edges_from(filtered_edges)
 
-    return G
+    leveled_graph = set_levels(G)
+
+    return leveled_graph

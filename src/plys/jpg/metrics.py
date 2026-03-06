@@ -1,17 +1,10 @@
 # each node knows its level
 # metrics taken from Ostwald 2011
 
-from typing import NamedTuple
 from plys.jpg.interfaces import JPGraph
 from utils4plans.lists import sort_and_group_objects_dict
 from loguru import logger
-
-
-class JPGMetrics(NamedTuple):
-    total_depth: float
-    mean_depth: float
-    relative_asymmetry: float
-    control_value: dict[str, float]
+from plys.jpg.interfaces import JPGMetrics
 
 
 def calculate_total_depth(G: JPGraph):
@@ -56,3 +49,17 @@ def calculate_control_value(G: JPGraph):
         control_values[node] = calc_a_value(node)
 
     return control_values
+
+
+def calculate_jpg_metrics(G: JPGraph):
+    total_depth = calculate_total_depth(G)
+    mean_depth = calculate_mean_depth(G, total_depth)
+    relative_asymmetry = calculate_relative_asymmetry(G, mean_depth)
+    control_value = calculate_control_value(G)
+
+    return JPGMetrics(
+        total_depth=total_depth,
+        mean_depth=mean_depth,
+        relative_asymmetry=relative_asymmetry,
+        control_value=control_value,
+    )
