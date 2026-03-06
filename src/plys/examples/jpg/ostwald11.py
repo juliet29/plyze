@@ -22,10 +22,7 @@ class VillaAlpha:
 
     @property
     def graph(self):
-        G = JPGraph()
-        G.add_jpnodes(self.nodes)
-        G.add_edges_from(self.edges)
-        return G
+        return JPGraph.create("ostwald11", self.nodes, self.edges)
 
     @property
     def metrics(self):

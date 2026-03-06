@@ -40,7 +40,9 @@ def set_levels(G: JPGraph):
     return G
 
 
-def idf_to_jpgraph(idf_path: Path, sql_path: Path, datetime_: datetime):
+def idf_to_jpgraph(
+    graph_name: str, idf_path: Path, sql_path: Path, datetime_: datetime
+):
     case = EZ(idf_path)
 
     def make_jpnode_from_zone(zone: Zone):
@@ -74,9 +76,7 @@ def idf_to_jpgraph(idf_path: Path, sql_path: Path, datetime_: datetime):
     ]
     filtered_edges = [i for i in edges if i]
 
-    G = JPGraph()
-    G.add_jpnodes(jpnodes)
-    G.add_edges_from(filtered_edges)
+    G = JPGraph.create(graph_name, jpnodes, filtered_edges)
 
     leveled_graph = set_levels(G)
 

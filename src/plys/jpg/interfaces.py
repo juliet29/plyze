@@ -40,16 +40,29 @@ class Edge(BaseModel):
 
 
 class JPGraph(nx.Graph):
+    graph_name: str = ""
     # TODO: init function that takes jpnodes and their edges..
 
     def add_jpnodes(self, nodes: list[JPNode]):
         self.add_nodes_from([i.entry for i in nodes])
 
     @classmethod
-    def create(cls, nodes: list[JPNode], edges: list[Edge]):
+    def create(
+        cls, name: str, nodes: list[JPNode], edges: list[Edge] | list[tuple[str, str]]
+    ):
         G = cls()
+        G.graph_name = name
         G.add_jpnodes(nodes)
-        G.add_edges_from([i.as_tuple for i in edges])
+        if isinstance(edges[0], Edge):
+            # TODO: figure out how to assert for a group of edges
+            G.add_edges_from(
+                [
+                    i.as_tuple  # pyright: ignore[reportAttributeAccessIssue]
+                    for i in edges  # pyright: ignore[reportAttributeAccessIssue]
+                ]
+            )
+        else:
+            G.add_edges_from(edges)  # pyright: ignore[reportArgumentType]
         return G
 
     @property
@@ -88,6 +101,7 @@ class JPGraph(nx.Graph):
 
 
 class JPGraphModel(BaseModel):
+    graph_name: str
     nodes: list[JPNode]
     edges: list[Edge]
 
@@ -98,12 +112,14 @@ class JPGraphModel(BaseModel):
         logger.debug(data)
 
         logger.debug(model)
-        G = JPGraph.create(model.nodes, model.edges)
+        G = JPGraph.create(model.graph_name, model.nodes, model.edges)
         return G
 
     @classmethod
     def write(cls, G: JPGraph, path: Path):
-        model = cls.model_validate({"nodes": G.jpnodes, "edges": G.jpedges})
+        model = cls.model_validate(
+            {"graph_name": G.graph_name, "nodes": G.jpnodes, "edges": G.jpedges}
+        )
         write_json(model.model_dump(), path, OVERWRITE=True)
 
 

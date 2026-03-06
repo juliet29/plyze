@@ -12,17 +12,18 @@ from plys.utils import CaseData
 
 class TestJPGCreation:
     cd = CaseData(ProjectPaths.sample_idf, ProjectPaths.sample_sql)
+    graph_name = "sample"
 
     datetime = datetime(2017, 7, 1, 12)
 
     def test_create_from_idf(self):
-        jpg = idf_to_jpgraph(*self.cd, self.datetime)
+        jpg = idf_to_jpgraph(self.graph_name, *self.cd, self.datetime)
         assert len(jpg.jpnodes) > 1
         assert len(list(jpg.edges)) > 1
 
     @property
     def G(self):
-        return idf_to_jpgraph(*self.cd, self.datetime)
+        return idf_to_jpgraph(self.graph_name, *self.cd, self.datetime)
 
     def test_set_levels(self):
         # TODO: modifyung in place, not very functional, could cause errors later...
