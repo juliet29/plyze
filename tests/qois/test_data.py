@@ -1,11 +1,9 @@
 import polars as pl
 from plys.paths import ProjectPaths
-from plys.qoi.data import to_multi_data
-from plys.qoi.plots import (
-    to_dataframe_with_spaces,
-)
-from plys.qoi.registry import QOIRegistry, QOIandData
-from plys.qoi.spaces import create_space_df
+from plys.qoi.data.data import to_dataframe_with_spaces, to_multi_data
+from plys.qoi.data.interfaces import QOIandData
+from plys.qoi.data.spaces import create_space_df
+from plys.qoi.registries.main import QOIRegistry
 
 
 def test_create_space_df():

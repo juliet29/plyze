@@ -3,10 +3,10 @@ from pathlib import Path
 
 configfile: "config/test.yaml"
 
-def get_samples(wildcards):
+def get_samples(wildcards): # TODO: move to a common.smk
   loc = Path(config["pathvars"]["samples_loc"])
   path = loc / "{sample}" / "out.idf" 
-  print(path)
+  print(path) # TODO: can us loguru here as well, if want this to be part of the reporting. 
   # TODO: need to consider that there are many paths => data is in buckets... but can keep in buckets? 
 
   samples, = glob_wildcards(path)
@@ -16,7 +16,7 @@ def get_samples(wildcards):
 
 
 
-rule all:
+rule all: # TODO: this should work if set force flag to run all above.. need to play w/ it and test
     input:
         "<shared_loc>/metrics/out.csv"
 

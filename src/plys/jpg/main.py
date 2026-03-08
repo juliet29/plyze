@@ -10,8 +10,14 @@ from plys.jpg.interfaces import JPGraph, JPNode, JPNodeData
 import networkx as nx
 from utils4plans.sets import set_difference
 
-from plys.qoi.custom_qois import find_drn
-from plys.qoi.registry import QOIRegistry, QOIandData, select_time
+# from plys.qoi.custom_qois import find_drn
+# from plys.qoi.registry import QOIRegistry, QOIandData, select_time
+
+# from plys.qoi.registries.custom_qois import find_drn_in_name
+
+from plys.qoi.xarray_helpers import find_drn_in_name, select_time
+from plys.qoi.registries.main import QOIRegistry
+from plys.qoi.data.interfaces import QOIandData
 
 
 def set_levels(G: JPGraph):
@@ -34,6 +40,7 @@ def set_levels(G: JPGraph):
             # logger.debug(f"{carrier_node.name}, {node}, {distance}")
             update_level(node, int(distance))
         except nx.NetworkXNoPath:
+            # TODO: the reason the metrics is failing is because maybe including invalid nodes in the count... maybe need a filtering function that takes only positive levels
             # NOTE: the node is disconnected, assign is a negative value for now, potentially delete later..
             update_level(node, -1)
 
@@ -64,7 +71,7 @@ def idf_to_jpgraph(
         max_node_at_time = (
             select_time(wind_pressure_data, datetime_).idxmax().to_dict()["data"]
         )
-        max_node_as_drn = find_drn(max_node_at_time)
+        max_node_as_drn = find_drn_in_name(max_node_at_time)
         return JPNode(name=max_node_as_drn, data=JPNodeData(is_carrier=True, level=0))
 
     carrier_node = make_carrier_jpnode()

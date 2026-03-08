@@ -1,0 +1,9 @@
+# on Sherlock, will need to change this config  file
+pathvars:
+  samples_loc: "static/4_temp/smk/test/samples"
+  jpg_loc: "static/4_temp/smk/test/jpg"
+  qoi_loc: "static/4_temp/smk/test/qoi"
+  shared_loc: "static/4_temp/smk/test/shared"
+
+# Datetime format must be %Y-%m-%dT%H:%M:%. See [cyclopts rules on coercing dates](https://cyclopts.readthedocs.io/en/latest/rules.html#datetime)
+date_time: "2017-07-01T12:00:00"
