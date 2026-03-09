@@ -16,6 +16,7 @@ class GenericQOI:
     nickname: str
     unit: str
     space_type: SpaceTypesLiteral
+    info: str = ""
 
     @property
     def label(self):

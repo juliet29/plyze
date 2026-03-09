@@ -1,22 +1,8 @@
-from typing import Literal
 from plys.qoi.xarray_helpers import find_drn_in_name
 from utils4plans.lists import sort_and_group_objects
-import xarray as xr
 from pathlib import Path
 from plan2eplus.results.sql import get_qoi
 from plys.qoi.registries.interfaces import CustomQOIComponents, CustomQOI
-
-
-def default_custom_qoi_fx(
-    components: CustomQOIComponents, operation: Literal["+", "-"], sql_path: Path
-) -> xr.DataArray:
-    arr_a = get_qoi(components.a, sql_path).data_arr
-    arr_b = get_qoi(components.b, sql_path).data_arr
-
-    if operation == "-":
-        return arr_a - arr_b
-    elif operation == "+":
-        return arr_a + arr_b
 
 
 # @dataclass(frozen=True)
@@ -32,6 +18,10 @@ def default_custom_qoi_fx(
 
 
 # OTHER FUNCTIONS --- > Modifying the xarray dataarray in some more complex way...
+def get_zone_total_incoming_flow(sql_path: Path):
+    f21 = get_qoi("AFN Linkage Node 2 to Node 1 Volume Flow Rate", sql_path).data_arr
+    # don't want to rely on the IDF, so use the zone temperatures to get the zone names and group together..
+    pass
 
 
 def get_wind_pressure_unique_external_nodes(sql_path: Path):
@@ -40,7 +30,7 @@ def get_wind_pressure_unique_external_nodes(sql_path: Path):
     grouped_space_names = sort_and_group_objects(
         wind_pressure.space_names.to_series().to_list(), lambda x: find_drn_in_name(x)
     )
-    # just want the first from each node
+    # just want the first from each group
     selected_space_names = [i[0] for i in grouped_space_names]
     # TODO: good opportunity to simplify the names..  to be the direction..
     return wind_pressure.sel(space_names=selected_space_names)

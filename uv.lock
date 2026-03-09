@@ -1570,6 +1570,7 @@ dependencies = [
     { name = "loguru" },
     { name = "networkx" },
     { name = "plan2eplus" },
+    { name = "polars-config-meta" },
     { name = "ptpython" },
     { name = "scikit-learn" },
     { name = "snakemake" },
@@ -1582,6 +1583,7 @@ requires-dist = [
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "networkx", specifier = ">=3.6.1" },
     { name = "plan2eplus", specifier = ">=0.1.5" },
+    { name = "polars-config-meta", specifier = ">=0.3.2" },
     { name = "ptpython", specifier = ">=3.0.32" },
     { name = "scikit-learn", specifier = ">=1.8.0" },
     { name = "snakemake", specifier = ">=9.16.3" },
@@ -1598,6 +1600,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c6/5e/208a24471a433bcd0e9a6889ac49025fd4daad2815c8220c5bd2576e5f1b/polars-1.38.1.tar.gz", hash = "sha256:803a2be5344ef880ad625addfb8f641995cfd777413b08a10de0897345778239", size = 717667, upload-time = "2026-02-06T18:13:23.013Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0a/49/737c1a6273c585719858261753da0b688454d1b634438ccba8a9c4eb5aab/polars-1.38.1-py3-none-any.whl", hash = "sha256:a29479c48fed4984d88b656486d221f638cba45d3e961631a50ee5fdde38cb2c", size = 810368, upload-time = "2026-02-06T18:11:55.819Z" },
+]
+
+[[package]]
+name = "polars-config-meta"
+version = "0.3.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/6b/c2/794a7e877e2e598c9a3cdc321d63e1d65d59595997880edf2577831ee6fc/polars_config_meta-0.3.2.tar.gz", hash = "sha256:b1fa809357776c751a57212f155bfbefd9bf02faead5ec59d0d5d4cd4fcf52e1", size = 16730, upload-time = "2026-01-05T12:50:04.783Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/aa/e1/fed85aa50b0ad75d4b3cae94962148b4f03338b240a74afdc8400c73203f/polars_config_meta-0.3.2-py3-none-any.whl", hash = "sha256:efd6e7df6410b10695f1ee23d1ffc0d5292320aea6a273345f6849ae34d9d14e", size = 13057, upload-time = "2026-01-05T12:50:03.68Z" },
 ]
 
 [[package]]

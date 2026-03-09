@@ -4,19 +4,30 @@ import xarray as xr
 from pathlib import Path
 from plys.qoi.data.interfaces import QOIandData
 from plys.qoi.registries.interfaces import QOIType
-from plys.qoi.xarray_helpers import convert_xarray_to_polars
+from plys.qoi.xarray_helpers import convert_xarray_to_polars, select_time
 from datetime import datetime
 
 from plys.qoi.data.spaces import create_space_df
+import polars_config_meta
 
 
-def select_times(qoidata: QOIandData):
-    days = [1]  # 2
-    times = [9, 12, 15, 18, 21, 0]
+def keep():
+    polars_config_meta.compare_discovered_methods
+
+
+def select_custom_times(
+    qoidata: QOIandData,
+    year: int = 2017,
+    month: int = 7,
+    days: list[int] = [1],
+    times: list[int] = [9, 12, 15, 18, 21, 0],
+):
     datetimes = [
-        datetime(year=2017, month=7, day=i, hour=j) for i, j in product(days, times)
+        datetime(year=year, month=month, day=i, hour=j) for i, j in product(days, times)
     ]
-    arr = qoidata.original_arr.sel(datetimes=datetimes)
+    # TODO: datetime object that can handle complex selections... and that can pass around.. definitely DONT want to be passing these about one by one
+    # TODO: for reproducibility purposes this should be stated in the yaml
+    arr = select_time(qoidata.original_arr, datetimes)
     qoidata.set_array(arr)
     return qoidata
 
@@ -28,7 +39,7 @@ def to_dataframe(qoidata: QOIandData):
 
 
 def to_dataframe_with_spaces(qoi: QOIType, idf: Path, sql: Path):
-    qoid = select_times(QOIandData(qoi, sql))
+    qoid = select_custom_times(QOIandData(qoi, sql))
     df = to_dataframe(qoid)
     space_df = create_space_df(idf)
 
@@ -37,10 +48,10 @@ def to_dataframe_with_spaces(qoi: QOIType, idf: Path, sql: Path):
     return qoid
 
 
-def to_multi_data(qois: Sequence[QOIType], idf: Path, sql: Path):
+def to_multi_data(qois: Sequence[QOIType], idf: Path, sql: Path, case_name: str = ""):
 
     def to_df(qoi: QOIType):
-        qoid = select_times(QOIandData(qoi, sql))
+        qoid = select_custom_times(QOIandData(qoi, sql))
         return to_dataframe(qoid)
 
     # TODO: add utils4plans as set_unique function
@@ -55,4 +66,9 @@ def to_multi_data(qois: Sequence[QOIType], idf: Path, sql: Path):
         d0 = d0.join(df, on=["datetimes", "space_names"])
 
     space_df = create_space_df(idf)
-    return d0.join(space_df, on="space_names")
+    d1 = d0.join(space_df, on="space_names")
+    if case_name:
+        return d1.config_meta.set(  # pyright: ignore[reportAttributeAccessIssue]
+            case_name=case_name
+        )  # pyright: ignore[reportAttributeAccessIssue]
+    return d1

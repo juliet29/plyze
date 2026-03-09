@@ -13,7 +13,7 @@ from utils4plans.sets import set_difference
 # from plys.qoi.custom_qois import find_drn
 # from plys.qoi.registry import QOIRegistry, QOIandData, select_time
 
-# from plys.qoi.registries.custom_qois import find_drn_in_name
+# from plys.qoi.registries.custom import find_drn_in_name
 
 from plys.qoi.xarray_helpers import find_drn_in_name, select_time
 from plys.qoi.registries.main import QOIRegistry
