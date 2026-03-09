@@ -51,3 +51,7 @@ class CaseQOIandData(NamedTuple):
         case_name = pl.read_parquet_metadata(path)["case_name"]
         dataframe = pl.read_parquet(path)
         return cls(case_name, dataframe)
+
+    def write(self, path):
+        metadata = {"case_name": self.case_name}
+        self.dataframe.write_parquet(path, metadata=metadata)

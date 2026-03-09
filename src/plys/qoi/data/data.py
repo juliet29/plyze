@@ -56,6 +56,7 @@ def to_multi_data(qois: Sequence[QOIType], idf: Path, sql: Path):
     ), f"Expected the space_types to all be the same, but got: {space_types}"
 
     dfs = [to_df(i) for i in qois]
+
     d0 = dfs[0]
     for df in dfs[1:]:
         d0 = d0.join(df, on=["datetimes", "space_names"])

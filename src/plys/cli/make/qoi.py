@@ -14,7 +14,11 @@ qoi = App(name="qoi")
 def create(
     case_name: str, idf_path: Path, sql_path: Path, zonal_path: Path, surface_path: Path
 ):
-    gather_standard_data(case_name, idf_path, sql_path, zonal_path, surface_path)
+
+    data = gather_standard_data(idf_path, sql_path)
+    CaseQOIandData(case_name, data.zonal).write(zonal_path)
+    CaseQOIandData(case_name, data.surface).write(surface_path)
+
     logger.success("Finished writing standard data")
 
 

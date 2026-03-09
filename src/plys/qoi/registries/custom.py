@@ -37,15 +37,16 @@ def get_wind_pressure_unique_external_nodes(sql_path: Path):
 
 
 class CustomQOIRegistry:
-    net_flow = CustomQOI(  # NOTE: this is really more of a dissipation metric..
-        name="AFN Linkage Node 1 to Node 2 Net Flow Rate ",
+    net_out_flow = CustomQOI(  # NOTE: this is really more of a dissipation metric..
+        name="AFN Linkage Node 1 to Node 2 Net Volume Flow Rate ",
         components=CustomQOIComponents(
             "AFN Linkage Node 1 to Node 2 Volume Flow Rate",
             "AFN Linkage Node 2 to Node 1 Volume Flow Rate",
         ),
-        nickname="net_flow",
+        nickname="net_out_flow",
         unit="m3/s",
         space_type="Surface",
+        info="Net OUTgoing flow",
     )
     combined_volume = CustomQOI(
         name="AFN Combined Mixing and Ventilation Volume",

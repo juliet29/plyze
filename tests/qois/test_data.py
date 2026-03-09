@@ -14,7 +14,7 @@ def test_create_space_df():
 
 def test_qoi_data_creation():
     res = to_dataframe_with_spaces(
-        QOIRegistry.flow_12, ProjectPaths.sample_idf, ProjectPaths.sample_sql
+        QOIRegistry.flow_out, ProjectPaths.sample_idf, ProjectPaths.sample_sql
     )
     assert isinstance(res.dataframe, pl.DataFrame)
     assert res.dataframe["space_names"].len() > 1
@@ -22,7 +22,9 @@ def test_qoi_data_creation():
 
 def test_qoi_data_creation_with_custom_qoi():
     res = to_dataframe_with_spaces(
-        QOIRegistry.custom.net_flow, ProjectPaths.sample_idf, ProjectPaths.sample_sql
+        QOIRegistry.custom.net_out_flow,
+        ProjectPaths.sample_idf,
+        ProjectPaths.sample_sql,
     )
     assert isinstance(res.dataframe, pl.DataFrame)
 

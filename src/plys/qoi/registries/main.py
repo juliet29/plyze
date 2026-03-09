@@ -4,15 +4,19 @@ from plys.qoi.registries.custom import CustomQOIRegistry
 
 class QOIRegistry:
     custom = CustomQOIRegistry
-    flow_12 = EpQOI(
+    flow_out = EpQOI(
         "AFN Linkage Node 1 to Node 2 Volume Flow Rate",
-        "net_flow",
+        "flow_out",
         "m3/s",
         "Surface",
         info="~Outgoing flows~: Outdoor flows: from thermal zone to outdoors. Indoor flows: from thermal zone 'owning' the surface to its neighbor.",
     )
-    flow_21 = EpQOI(
-        "AFN Linkage Node 2 to Node 1 Volume Flow Rate", "net_flow", "m3/s", "Surface"
+    flow_in = EpQOI(
+        "AFN Linkage Node 2 to Node 1 Volume Flow Rate",
+        "flow_in",
+        "m3/s",
+        "Surface",
+        info="~Incoming flows~: From outdoors to the thermal zone, from neighbors sharing surface to THIS zone (which `owns` the surface)",
     )
 
     temp = EpQOI("Zone Mean Air Temperature", "temp", "C", "Zone")
