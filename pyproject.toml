@@ -12,6 +12,7 @@ dependencies = [
   "loguru>=0.7.3",
   "networkx>=3.6.1",
   "plan2eplus>=0.1.5",
+  "pre-commit>=4.5.1",
   "ptpython>=3.0.32",
   "scikit-learn>=1.8.0",
   "snakemake>=9.16.3",

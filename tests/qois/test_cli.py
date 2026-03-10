@@ -24,4 +24,4 @@ def test_consolidating_data():
     case_names = ["c1", "c2"]
     case_datas = [CaseQOIandData(case, df) for case, df in zip(case_names, [df1, df2])]
     df = consolidate_data(case_datas)
-    assert df["case_name"].unique().to_list() == case_names
+    assert sorted(df["case_name"].unique().to_list()) == sorted(case_names)
