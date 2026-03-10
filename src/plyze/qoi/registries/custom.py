@@ -1,8 +1,8 @@
-from plys.qoi.xarray_helpers import find_drn_in_name
+from plyze.qoi.xarray_helpers import find_drn_in_name
 from utils4plans.lists import sort_and_group_objects
 from pathlib import Path
 from plan2eplus.results.sql import get_qoi
-from plys.qoi.registries.interfaces import CustomQOIComponents, CustomQOI
+from plyze.qoi.registries.interfaces import CustomQOIComponents, CustomQOI
 
 
 # @dataclass(frozen=True)

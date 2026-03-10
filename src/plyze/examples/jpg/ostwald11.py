@@ -1,4 +1,4 @@
-from plys.jpg.interfaces import JPGraph, JPNodeData, JPNode, JPGMetrics
+from plyze.jpg.interfaces import JPGraph, JPNodeData, JPNode, JPGMetrics
 
 
 class VillaAlpha:

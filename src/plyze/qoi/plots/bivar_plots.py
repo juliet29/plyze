@@ -1,10 +1,10 @@
 import polars as pl
-from plys.qoi.data import to_multi_data
-from plys.utils import CaseData
+from plyze.qoi.data import to_multi_data
+from plyze.utils import CaseData
 
 import altair as alt
-from plys.qoi.plots import facet
-from plys.qoi.registry import QOIRegistry, QOIType
+from plyze.qoi.plots import facet
+from plyze.qoi.registry import QOIRegistry, QOIType
 
 
 def bivar_plot(df: pl.DataFrame, q1: QOIType, q2: QOIType):

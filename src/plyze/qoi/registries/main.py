@@ -1,5 +1,5 @@
-from plys.qoi.registries.interfaces import EpQOI
-from plys.qoi.registries.custom import CustomQOIRegistry
+from plyze.qoi.registries.interfaces import EpQOI
+from plyze.qoi.registries.custom import CustomQOIRegistry
 
 
 class QOIRegistry:

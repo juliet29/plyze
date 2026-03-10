@@ -1,9 +1,9 @@
 import polars as pl
-from plys.paths import ProjectPaths
-from plys.qoi.data.data import to_dataframe_with_spaces, to_multi_data
-from plys.qoi.data.interfaces import QOIandData
-from plys.qoi.data.spaces import create_space_df
-from plys.qoi.registries.main import QOIRegistry
+from plyze.paths import ProjectPaths
+from plyze.qoi.data.data import to_dataframe_with_spaces, to_multi_data
+from plyze.qoi.data.interfaces import QOIandData
+from plyze.qoi.data.spaces import create_space_df
+from plyze.qoi.registries.main import QOIRegistry
 
 
 def test_create_space_df():

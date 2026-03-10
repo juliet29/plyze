@@ -1,12 +1,12 @@
-from plys.paths import ProjectPaths
-from plys.qoi.plots import (
+from plyze.paths import ProjectPaths
+from plyze.qoi.plots import (
     corr_plot,
     surface_corr_plot,
     surface_qois,
     to_dataframe_with_spaces,
     zone_qois,
 )
-from plys.qoi.registry import QOIType
+from plyze.qoi.registry import QOIType
 from pathlib import Path
 
 ### ------- DESIGN METRICS  ---------------------- #####

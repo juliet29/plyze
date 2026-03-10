@@ -2,10 +2,10 @@ from pathlib import Path
 import tempfile
 from datetime import datetime
 
-from plys.jpg.interfaces import JPGraphModel
-from plys.jpg.main import idf_to_jpgraph, set_levels
-from plys.paths import ProjectPaths
-from plys.utils import CaseData
+from plyze.jpg.interfaces import JPGraphModel
+from plyze.jpg.main import idf_to_jpgraph, set_levels
+from plyze.paths import ProjectPaths
+from plyze.utils import CaseData
 
 # TODO: move this to examples...
 

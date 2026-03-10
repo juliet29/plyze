@@ -6,18 +6,18 @@ from plan2eplus.ezcase.ez import EZ
 from plan2eplus.ops.afn.ezobject import Airboundary
 from plan2eplus.ops.subsurfaces.ezobject import Subsurface
 from plan2eplus.ops.zones.ezobject import Zone
-from plys.jpg.interfaces import JPGraph, JPNode, JPNodeData
+from plyze.jpg.interfaces import JPGraph, JPNode, JPNodeData
 import networkx as nx
 from utils4plans.sets import set_difference
 
-# from plys.qoi.custom_qois import find_drn
-# from plys.qoi.registry import QOIRegistry, QOIandData, select_time
+# from plyze.qoi.custom_qois import find_drn
+# from plyze.qoi.registry import QOIRegistry, QOIandData, select_time
 
-# from plys.qoi.registries.custom import find_drn_in_name
+# from plyze.qoi.registries.custom import find_drn_in_name
 
-from plys.qoi.xarray_helpers import find_drn_in_name, select_time
-from plys.qoi.registries.main import QOIRegistry
-from plys.qoi.data.interfaces import QOIandData
+from plyze.qoi.xarray_helpers import find_drn_in_name, select_time
+from plyze.qoi.registries.main import QOIRegistry
+from plyze.qoi.data.interfaces import QOIandData
 
 
 def set_levels(G: JPGraph):

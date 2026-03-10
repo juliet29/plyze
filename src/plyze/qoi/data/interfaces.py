@@ -4,7 +4,7 @@ import polars as pl
 import xarray as xr
 from pathlib import Path
 from plan2eplus.results.sql import get_qoi
-from plys.qoi.registries.interfaces import EpQOI, CustomQOI, QOIType
+from plyze.qoi.registries.interfaces import EpQOI, CustomQOI, QOIType
 
 
 @dataclass

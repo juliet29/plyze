@@ -3,13 +3,13 @@ import altair as alt
 
 from cyclopts import App
 
-from plys.fpviz.main import plan_plot
-from plys.paths import ProjectPaths
-from plys.qoi.plots.altair_helpers import AltairRenderers
-from plys.qoi.plots.theme import default_theme
+from plyze.fpviz.main import plan_plot
+from plyze.paths import ProjectPaths
+from plyze.qoi.plots.altair_helpers import AltairRenderers
+from plyze.qoi.plots.theme import default_theme
 from loguru import logger
-from plys.cli.make.jpg import jpg
-from plys.cli.make.qoi import qoi
+from plyze.cli.make.jpg import jpg
+from plyze.cli.make.qoi import qoi
 
 app = App()
 app.command(jpg)

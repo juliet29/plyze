@@ -2,12 +2,12 @@ from itertools import product
 from typing import Sequence
 import xarray as xr
 from pathlib import Path
-from plys.qoi.data.interfaces import QOIandData
-from plys.qoi.registries.interfaces import QOIType
-from plys.qoi.xarray_helpers import convert_xarray_to_polars, select_time
+from plyze.qoi.data.interfaces import QOIandData
+from plyze.qoi.registries.interfaces import QOIType
+from plyze.qoi.xarray_helpers import convert_xarray_to_polars, select_time
 from datetime import datetime
 
-from plys.qoi.data.spaces import create_space_df
+from plyze.qoi.data.spaces import create_space_df
 
 
 def select_custom_times(

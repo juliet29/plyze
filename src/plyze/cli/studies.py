@@ -4,11 +4,11 @@ from cyclopts import App
 from loguru import logger
 from utils4plans.logconfig import logset
 
-from plys.examples.casedata import ex
-from plys.qoi.data.interfaces import CaseQOIandData
-from plys.qoi.data.outputs import consolidate_data, get_surface_qois
-from plys.qoi.plots.altair_helpers import AltairRenderers
-from plys.qoi.plots.theme import default_theme
+from plyze.examples.casedata import ex
+from plyze.qoi.data.interfaces import CaseQOIandData
+from plyze.qoi.data.outputs import consolidate_data, get_surface_qois
+from plyze.qoi.plots.altair_helpers import AltairRenderers
+from plyze.qoi.plots.theme import default_theme
 
 app = App()
 

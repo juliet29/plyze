@@ -23,7 +23,7 @@ rule create_jpg:
         name = lambda wildcards: wildcards.sample 
     shell:
         """
-        uv run plys jpg create \
+        uv run plyze jpg create \
             --graph_name {params.name} \
             --idf-path {input.idf} \
             --sql-path {input.sql} \
@@ -38,7 +38,7 @@ rule create_jpg_metrics:
         metrics = "<jpg_loc>/metrics/{sample}/out.json"
     shell:
         """
-        uv run plys jpg create-metrics \
+        uv run plyze jpg create-metrics \
             --jpg-path {input.jpg} \
             --metrics-path {output.metrics}
         """
@@ -50,7 +50,7 @@ rule consolidate_metrics:
         csv = "<shared_loc>/metrics/out.csv"
     shell:
         """
-        uv run plys jpg consolidate \
+        uv run plyze jpg consolidate \
             --metrics-paths {input.metrics} \
             --csv-path {output.csv}
         """

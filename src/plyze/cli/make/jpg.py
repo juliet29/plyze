@@ -2,9 +2,9 @@ from datetime import datetime
 import polars as pl
 from pathlib import Path
 
-from plys.jpg.interfaces import JPGMetrics, JPGraphModel
-from plys.jpg.metrics import calculate_jpg_metrics
-from plys.jpg.main import idf_to_jpgraph
+from plyze.jpg.interfaces import JPGMetrics, JPGraphModel
+from plyze.jpg.metrics import calculate_jpg_metrics
+from plyze.jpg.main import idf_to_jpgraph
 from loguru import logger
 from cyclopts import App
 

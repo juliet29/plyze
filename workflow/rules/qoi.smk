@@ -20,7 +20,7 @@ rule qoi_create:
         name = lambda wildcards: wildcards.sample 
     shell:
         """
-        uv run plys qoi create \
+        uv run plyze qoi create \
             --case-name {params.name} \
             --idf-path {input.idf} \
             --sql-path {input.sql} \
@@ -35,7 +35,7 @@ rule qoi_consolidate_zone:
         out = "<shared_loc>/qois/zonal/out.parquet"
     shell:
         """
-        uv run plys qoi consolidate \
+        uv run plyze qoi consolidate \
             --in-paths {input.parquets} \
             --out-path {output.out}
         """
@@ -47,7 +47,7 @@ rule qoi_consolidate_surface:
         out = "<shared_loc>/qois/surface/out.parquet"
     shell:
         """
-        uv run plys qoi consolidate \
+        uv run plyze qoi consolidate \
             --in-paths {input.parquets} \
             --out-path {output.out}
         """

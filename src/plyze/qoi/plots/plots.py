@@ -1,9 +1,9 @@
 import polars as pl
 from pathlib import Path
 import altair as alt
-from plys.qoi.registry import QOIRegistry, QOIandData
+from plyze.qoi.registry import QOIRegistry, QOIandData
 
-from plys.qoi.data import to_dataframe_with_spaces
+from plyze.qoi.data import to_dataframe_with_spaces
 
 
 def plot_setup(qoidata: QOIandData):

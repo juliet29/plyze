@@ -1,13 +1,13 @@
 # test metrics
 
 
-from plys.jpg.metrics import (
+from plyze.jpg.metrics import (
     calculate_control_value,
     calculate_mean_depth,
     calculate_relative_asymmetry,
     calculate_total_depth,
 )
-from plys.examples.jpg.ostwald11 import VillaAlpha
+from plyze.examples.jpg.ostwald11 import VillaAlpha
 import pytest
 import tempfile
 from pathlib import Path

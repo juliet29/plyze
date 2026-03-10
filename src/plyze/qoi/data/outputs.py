@@ -2,9 +2,9 @@ from pathlib import Path
 from typing import NamedTuple
 from loguru import logger
 import polars as pl
-from plys.qoi.data.data import to_multi_data
-from plys.qoi.data.interfaces import CaseQOIandData
-from plys.qoi.registries.main import QOIRegistry as QR
+from plyze.qoi.data.data import to_multi_data
+from plyze.qoi.data.interfaces import CaseQOIandData
+from plyze.qoi.registries.main import QOIRegistry as QR
 
 
 class StandardData(NamedTuple):

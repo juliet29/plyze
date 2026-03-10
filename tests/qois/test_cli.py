@@ -1,10 +1,10 @@
 from pathlib import Path
 import polars as pl
 import tempfile
-from plys.examples.casedata import ex
-from plys.cli.make.qoi import create
-from plys.qoi.data.interfaces import CaseQOIandData
-from plys.qoi.data.outputs import consolidate_data, get_surface_qois
+from plyze.examples.casedata import ex
+from plyze.cli.make.qoi import create
+from plyze.qoi.data.interfaces import CaseQOIandData
+from plyze.qoi.data.outputs import consolidate_data, get_surface_qois
 
 
 def test_gather_standard_data():

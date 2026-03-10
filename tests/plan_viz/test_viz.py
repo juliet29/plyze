@@ -1,5 +1,5 @@
-from plys.fpviz.main import plan_plot
-from plys.paths import ProjectPaths
+from plyze.fpviz.main import plan_plot
+from plyze.paths import ProjectPaths
 
 
 def test_plan_plot():

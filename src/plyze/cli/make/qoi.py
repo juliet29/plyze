@@ -2,8 +2,8 @@ from pathlib import Path
 
 from loguru import logger
 
-from plys.qoi.data.interfaces import CaseQOIandData
-from plys.qoi.data.outputs import consolidate_data, gather_standard_data
+from plyze.qoi.data.interfaces import CaseQOIandData
+from plyze.qoi.data.outputs import consolidate_data, gather_standard_data
 from cyclopts import App
 
 

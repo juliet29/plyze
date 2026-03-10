@@ -1,9 +1,9 @@
 # each node knows its level
 # metrics taken from Ostwald 2011
 
-from plys.jpg.interfaces import JPGraph
+from plyze.jpg.interfaces import JPGraph
 from utils4plans.lists import sort_and_group_objects_dict
-from plys.jpg.interfaces import JPGMetrics
+from plyze.jpg.interfaces import JPGMetrics
 
 
 def calculate_total_depth(G: JPGraph):

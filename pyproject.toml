@@ -1,7 +1,7 @@
 [project]
-name = "plys"
+name = "plyze"
 version = "0.1.0"
-description = "ply: floor PLan analYSis"
+description = "plyze: floor PLan analyZEr"
 readme = "README.md"
 authors = [
   { name = "Juliet Nwagwu Ume-Ezeoke", email = "jnwagwu@stanford.edu" },
@@ -25,5 +25,5 @@ build-backend = "uv_build"
 
 
 [project.scripts]
-plys = "plys.cli.make.main:main"
-plys-studies = "plys.cli.studies:main"
+plyze = "plyze.cli.make.main:main"
+plyze-studies = "plyze.cli.studies:main"
