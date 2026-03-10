@@ -1,6 +1,6 @@
 [project]
 name = "plyze"
-version = "0.1.0"
+version = "0.1.2"
 description = "plyze: floor PLan analyZEr"
 readme = "README.md"
 authors = [

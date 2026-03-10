@@ -4,15 +4,15 @@ from pathlib import Path
 configfile: "config/test.yaml"
 
 
-rule all: # TODO: this should work if set force flag to run all above.. need to play w/ it and test
+rule jpg_all: # TODO: this should work if set force flag to run all above.. need to play w/ it and test
     input:
         "<shared_loc>/metrics/out.csv"
 
-rule create_jpg_all:
-    input:
-      expand("<jpg_loc>/graphs/{sample}/out.json", sample=get_samples)
+# rule create_jpg_all:
+#     input:
+#       expand("<jpg_loc>/graphs/{sample}/out.json", sample=get_samples)
 
-rule create_jpg:
+rule jpg_create:
     input:
         idf = "<samples_loc>/{sample}/out.idf",
         sql = "<samples_loc>/{sample}/eplusout.sql"
@@ -31,7 +31,7 @@ rule create_jpg:
             --jpg-path {output.jpg}
         """
 
-rule create_jpg_metrics:
+rule jpg_metrics:
     input:
         jpg = "<jpg_loc>/graphs/{sample}/out.json"
     output:
@@ -43,7 +43,7 @@ rule create_jpg_metrics:
             --metrics-path {output.metrics}
         """
 
-rule consolidate_metrics:
+rule jpg_consolidate:
     input:
         metrics = expand("<jpg_loc>/metrics/{sample}/out.json", sample=get_samples)
     output:

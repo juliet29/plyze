@@ -1,5 +1,4 @@
 from pathlib import Path
-from loguru import logger
 import networkx as nx
 from utils4plans.io import read_json, write_json
 from utils4plans.lists import get_unique_one
@@ -109,9 +108,6 @@ class JPGraphModel(BaseModel):
     def read(cls, path: Path):
         data = read_json(path)
         model = cls.model_validate(data)
-        logger.debug(data)
-
-        logger.debug(model)
         G = JPGraph.create(model.graph_name, model.nodes, model.edges)
         return G
 

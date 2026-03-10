@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Annotated
 import polars as pl
 from pathlib import Path
 
@@ -6,7 +7,7 @@ from plyze.jpg.interfaces import JPGMetrics, JPGraphModel
 from plyze.jpg.metrics import calculate_jpg_metrics
 from plyze.jpg.main import idf_to_jpgraph
 from loguru import logger
-from cyclopts import App
+from cyclopts import App, Parameter
 
 
 jpg = App(name="jpg")
@@ -17,8 +18,11 @@ def create(
     graph_name: str, idf_path: Path, sql_path: Path, date_time: datetime, jpg_path: Path
 ):
     """
-    Datetime format must be %Y-%m-%dT%H:%M:%.
-    See [cyclopts rules on coercing dates](https://cyclopts.readthedocs.io/en/latest/rules.html#datetime)
+    Parameters
+    ----------
+    date_time: str
+        Datetime format must be %Y-%m-%dT%H:%M:%S.
+        See [cyclopts rules on coercing dates](https://cyclopts.readthedocs.io/en/latest/rules.html#datetime)
     """
     # TODO: register datetime as help!, not function description
     G = idf_to_jpgraph(graph_name, idf_path, sql_path, date_time)
@@ -35,11 +39,11 @@ def create_metrics(jpg_path: Path, metrics_path: Path):
 
 
 @jpg.command()
-def consolidate(metrics_paths: list[Path], csv_path: Path):
-    # TODO: make sure the paths and string names are aligned!
-    logger.debug(metrics_paths)
+def consolidate(
+    metrics_paths: Annotated[list[Path], Parameter(consume_multiple=True)],
+    csv_path: Path,
+):
     all_metrics = [JPGMetrics.read(i) for i in metrics_paths]
-    logger.debug(all_metrics)
     df = pl.DataFrame(all_metrics)
     df.write_csv(csv_path)
     logger.success("Finished consolidating JPG metrics")
