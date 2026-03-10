@@ -4,8 +4,8 @@ from loguru import logger
 
 from plyze.qoi.data.interfaces import CaseQOIandData
 from plyze.qoi.data.outputs import consolidate_data, gather_standard_data
-from cyclopts import App
-
+from cyclopts import App, Parameter
+from typing import Annotated
 
 qoi = App(name="qoi")
 
@@ -23,7 +23,9 @@ def create(
 
 
 @qoi.command()
-def consolidate(in_paths: list[Path], out_path: Path):
+def consolidate(
+    in_paths: Annotated[list[Path], Parameter(consume_multiple=True)], out_path: Path
+):
     datas = [CaseQOIandData.read(p) for p in in_paths]
     df = consolidate_data(datas)
     df.write_parquet(out_path)

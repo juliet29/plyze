@@ -14,6 +14,7 @@ publish-tag end:
 
   git tag -a v0.1.{{end}} -m v0.1.{{end}}
   git push --tag
+  sleep 2
   gh run list
   #TODO: read from the tags automatically using sed / awk 
 

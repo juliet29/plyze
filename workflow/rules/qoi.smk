@@ -12,7 +12,7 @@ rule qoi_all:
 rule qoi_create:
     input:
         idf = "<samples_loc>/{sample}/out.idf",
-        sql = "<samples_loc>/{sample}/eplusout.sql"
+        sql = "<samples_loc>/{sample}/results/eplusout.sql"
     output:
         zonal = "<qoi_loc>/{sample}/zonal/out.parquet",
         surface = "<qoi_loc>/{sample}/surface/out.parquet" 
