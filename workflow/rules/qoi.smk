@@ -1,6 +1,3 @@
-
-from pathlib import Path 
-
 configfile: "config/test.yaml"
 
 
@@ -8,8 +5,6 @@ configfile: "config/test.yaml"
 rule qoi_create:
     input:
         unpack(make_eplus_inputs)
-        # idf = "<samples_loc>/{sample}/out.idf",
-        # sql = "<samples_loc>/{sample}/results/eplusout.sql"
     output:
         zonal = "<qoi_loc>/{sample}/zonal/out.parquet",
         surface = "<qoi_loc>/{sample}/surface/out.parquet" 
@@ -24,6 +19,7 @@ rule qoi_create:
             --zonal-path {output.zonal} \
             --surface-path {output.surface} \
         """
+
 rule qoi_create_target:
   input: 
     expand("<qoi_loc>/{sample}/zonal/out.parquet", sample=get_eplus_samples),
