@@ -1,6 +1,6 @@
 # on Sherlock, will need to change this config  file
 pathvars:
-  samples_loc: "static/4_temp/samples2/1k2k"
+  samples_loc: "static/4_temp/samples2"
   jpg_loc: "static/4_temp/smk/test/jpg"
   qoi_loc: "static/4_temp/smk/test/qoi"
   shared_loc: "static/4_temp/smk/test/shared"

@@ -3,16 +3,6 @@ from pathlib import Path
 
 configfile: "config/test.yaml"
 
-# rule test_samples:
-#     input:
-#       unpack(make_eplus_inputs)
-#     output: 
-#       touch(input.idf)
-#     shell:
-#       """"
-#       echo "Inpus for {wildcards.sample}"
-#       ls -lh {input}
-#       """"
 
 
 rule jpg_create:

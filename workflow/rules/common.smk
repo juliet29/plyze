@@ -1,40 +1,50 @@
 from pathlib import Path
-# from collections import defaultdict
+from collections import defaultdict
+
+configfile: "config/test.yaml"
+
+def get_child_folders(path):
+    return [i for i in path.iterdir() if i.is_dir()]
 
 
-# def get_child_folders(path):
-#     return [i for i in path.iterdir() if i.is_dir()]
-#
-#
-# def create_case_parent_map(path):
-#     def handle_case(case_path):
-#         sql = case_path / "results/eplusout.sql"
-#         if sql.exists():
-#             mapping[case_path.name].append(p.name)
-#
-#     parents = get_child_folders(path)
-#     mapping: dict[str, list[str]] = defaultdict(list)
-#
-#     for p in parents:
-#         cases = get_child_folders(path)
-#         for case in cases:
-#             handle_case(case)
-#
-#     return mapping
+def create_case_parent_map(path):
+    def handle_case(case_path, parent_path):
+        sql = case_path / "results/eplusout.sql"
+        if sql.exists():
+            mapping[case_path.name] = parent_path.name
 
-# case_map = create_case_parent_map(Path(config["pathvars"]["samples_loc"]))
+    parents = get_child_folders(path)
+    mapping: dict[str, str] = {}
+
+    for parent in parents:
+        cases = get_child_folders(parent)
+        for case in cases:
+            handle_case(case, parent)
+
+
+    return mapping
+
+
+samples_loc = Path(config["pathvars"]["samples_loc"])
+case_map = create_case_parent_map(samples_loc)
+print(f"\nCASE MAP:\n {case_map}\n")
+
+
+
+
+
 
 
 def make_eplus_inputs(wildcards):
     loc = Path(config["pathvars"]["samples_loc"])
-    # parent = case_map[wildcards.sample]
+    parent = case_map[wildcards.sample]
     idf = loc / parent / "{wildcards.sample}/out.idf".format(wildcards=wildcards),
     sql = loc / parent / "{wildcards.sample}/results/eplusout.sql".format(wildcards=wildcards)
     return {"idf": idf, "sql": sql}
 
 def get_eplus_samples(wildcards): 
   loc = Path(config["pathvars"]["samples_loc"])
-  path = loc / "{folder}" / {"{sample}" / "results/eplusout.sql" 
+  path = loc / "{folder}" / "{sample}" / "results/eplusout.sql" 
   results = glob_wildcards(path)
 
   return results.sample

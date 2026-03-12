@@ -1,9 +1,5 @@
 configfile: "config/test.yaml"
 
-
-
-
-
 rule qoi_create:
     input:
         unpack(make_eplus_inputs)
