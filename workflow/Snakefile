@@ -1,4 +1,3 @@
-
 include: "rules/common.smk"
 include: "rules/jpg.smk"
 include: "rules/qoi.smk"

@@ -1,17 +1,44 @@
+from pathlib import Path
+# from collections import defaultdict
+
+
+# def get_child_folders(path):
+#     return [i for i in path.iterdir() if i.is_dir()]
+#
+#
+# def create_case_parent_map(path):
+#     def handle_case(case_path):
+#         sql = case_path / "results/eplusout.sql"
+#         if sql.exists():
+#             mapping[case_path.name].append(p.name)
+#
+#     parents = get_child_folders(path)
+#     mapping: dict[str, list[str]] = defaultdict(list)
+#
+#     for p in parents:
+#         cases = get_child_folders(path)
+#         for case in cases:
+#             handle_case(case)
+#
+#     return mapping
+
+# case_map = create_case_parent_map(Path(config["pathvars"]["samples_loc"]))
+
 
 def make_eplus_inputs(wildcards):
-
     loc = Path(config["pathvars"]["samples_loc"])
-    idf = loc / "{wildcards.sample}/out.idf".format(wildcards=wildcards),
-    sql = loc / "{wildcards.sample}/results/eplusout.sql".format(wildcards=wildcards)
+    # parent = case_map[wildcards.sample]
+    idf = loc / parent / "{wildcards.sample}/out.idf".format(wildcards=wildcards),
+    sql = loc / parent / "{wildcards.sample}/results/eplusout.sql".format(wildcards=wildcards)
     return {"idf": idf, "sql": sql}
 
 def get_eplus_samples(wildcards): 
   loc = Path(config["pathvars"]["samples_loc"])
-  path = loc /  "{sample}" / "results/eplusout.sql" 
-  samples, = glob_wildcards(path)
+  path = loc / "{folder}" / {"{sample}" / "results/eplusout.sql" 
+  results = glob_wildcards(path)
 
-  return samples
+  return results.sample
+
 
 def get_qoi_samples(wildcards): 
   loc = Path(config["pathvars"]["qoi_loc"])
@@ -26,4 +53,6 @@ def get_jpg_samples(wildcards):
   results = glob_wildcards(path)
 
   return results.sample
+
+
 
