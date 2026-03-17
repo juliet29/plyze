@@ -7,8 +7,8 @@ from utils4plans.logconfig import logset
 from plyze.examples.casedata import ex
 from plyze.qoi.data.interfaces import CaseQOIandData
 from plyze.qoi.data.outputs import consolidate_data, get_surface_qois
-from plyze.qoi.plots.altair_helpers import AltairRenderers
-from plyze.qoi.plots.theme import default_theme
+from plyze.plots.altair_helpers import AltairRenderers
+from plyze.plots.theme import default_theme
 
 app = App()
 

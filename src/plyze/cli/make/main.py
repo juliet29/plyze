@@ -5,8 +5,8 @@ from cyclopts import App
 
 from plyze.fpviz.main import plan_plot
 from plyze.paths import ProjectPaths
-from plyze.qoi.plots.altair_helpers import AltairRenderers
-from plyze.qoi.plots.theme import default_theme
+from plyze.plots.altair_helpers import AltairRenderers
+from plyze.plots.theme import default_theme
 from loguru import logger
 from plyze.cli.make.jpg import jpg
 from plyze.cli.make.qoi import qoi

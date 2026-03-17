@@ -10,15 +10,17 @@ from datetime import datetime
 from plyze.qoi.data.spaces import create_space_df
 
 
-def select_custom_times(
-    qoidata: QOIandData,
-    year: int = 2017,
-    month: int = 7,
-    days: list[int] = [1],
-    times: list[int] = [9, 12, 15, 18, 21, 0],
-):
+class TimeSelection:
+    year: int = 2017
+    month: int = 7
+    days: list[int] = [1]
+    hours: list[int] = [9, 12, 15, 18, 21, 0]
+
+
+def select_custom_times(qoidata: QOIandData, ts: TimeSelection = TimeSelection()):
     datetimes = [
-        datetime(year=year, month=month, day=i, hour=j) for i, j in product(days, times)
+        datetime(year=ts.year, month=ts.month, day=i, hour=j)
+        for i, j in product(ts.days, ts.hours)
     ]
     # TODO: datetime object that can handle complex selections... and that can pass around.. definitely DONT want to be passing these about one by one
     # TODO: for reproducibility purposes this should be stated in the yaml

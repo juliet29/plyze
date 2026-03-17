@@ -2,8 +2,19 @@ from plyze.qoi.registries.interfaces import EpQOI
 from plyze.qoi.registries.custom import CustomQOIRegistry
 
 
+class SiteQOIRegistry:
+    temp = EpQOI("Site Outdoor Air Drybulb Temperature", "tout", "ºC", "Site")
+    wind_speed = EpQOI("Site Wind Speed", "wind_speed", "m/s", "Site")
+    wind_direction = EpQOI("Site Wind Direction", "wind_direction", "º", "Site")
+
+    all = [temp, wind_speed, wind_direction]
+    # TODO: on next E+ cration record the solar radiation
+    # solar_rad = EpQOI("Solar Radiation", "tout", "ºC", "Site")
+
+
 class QOIRegistry:
     custom = CustomQOIRegistry
+    site = SiteQOIRegistry
     flow_out = EpQOI(
         "AFN Linkage Node 1 to Node 2 Volume Flow Rate",
         "flow_out",
@@ -54,3 +65,17 @@ class QOIRegistry:
         "Pa",
         "System",
     )
+
+    zonal_features = [
+        temp,
+        mix_vol,
+        vent_vol,
+        vent_heat_gain,
+        vent_heat_loss,
+        mix_heat_gain,
+        mix_heat_loss,
+        custom.net_vent_heat_gain,
+        custom.net_mix_heat_gain,
+    ]
+
+    zonal_feature_nicknames = [i.nickname for i in zonal_features]

@@ -4,7 +4,7 @@ from pathlib import Path
 from plan2eplus.results.sql import get_qoi
 from plyze.qoi.registries.interfaces import CustomQOIComponents, CustomQOI
 
-
+# hello
 # @dataclass(frozen=True)
 # class OutgoingFlow(GenericQOI):
 #     name: str
@@ -33,6 +33,7 @@ def get_wind_pressure_unique_external_nodes(sql_path: Path):
     # just want the first from each group
     selected_space_names = [i[0] for i in grouped_space_names]
     # TODO: good opportunity to simplify the names..  to be the direction..
+    # TODO: this should happen here and not in the jpg
     return wind_pressure.sel(space_names=selected_space_names)
 
 

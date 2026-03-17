@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from pathlib import Path
 import networkx as nx
 from utils4plans.io import read_json, write_json
@@ -136,3 +137,35 @@ class JPGMetrics(BaseModel):
         write_json(self.model_dump(), path, OVERWRITE=True)
 
         # TODO need to read for creating the unifying data...
+        #
+        #
+        #
+
+
+@dataclass(frozen=True)
+class GenericMetric:
+    name: str
+    nickname: str
+    unit: str
+
+
+class JPGMetricsRegistry:
+    total_depth = GenericMetric(name="Total Depth", nickname="total_depth", unit="")
+    mean_depth = GenericMetric(name="Mean Depth", nickname="mean_depth", unit="")
+    relative_asymmetry = GenericMetric(
+        name="Relative Assymetry", nickname="relative_asymmetry", unit=""
+    )
+
+    features = [total_depth, mean_depth, relative_asymmetry]
+
+    feature_nicknames = [i.nickname for i in features]
+
+    # @classmethod
+    # def features(cls):
+    #     items = [cls.total_depth, cls.mean_depth, cls.relative_asymmetry]
+    #     return items
+    #
+    # @classmethod
+    # def feature_nicknames(cls):
+    #     items = [i.nickname for i in cls.features()]
+    #     return items
