@@ -21,7 +21,7 @@ class TimeSelection:
 
     def __post_init__(self):
         if not self.hours:
-            self.hours = list(range(0, 23))
+            self.hours = list(range(0, 24))
 
     def calc_datetimes(self):
         datetimes = [
