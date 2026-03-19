@@ -68,15 +68,18 @@ def make_wind_pressure_df(sql: Path, ts: TimeSelection):
 def get_temporal_qois(case_names: list[str], sqls: list[Path], ts: TimeSelection):
 
     def make_case_df(case_name, sql):
-        wind_df = make_wind_pressure_df(sql, ts)
-        zonal_df = (
-            make_multiqoi_df(zonal_qois, sql, ts)
-            .group_by("datetimes")
-            .agg([pl.mean(i.nickname) for i in zonal_qois])
-        )
-        return wind_df.join(zonal_df, on="datetimes").with_columns(
-            case_name=pl.lit(case_name)
-        )
+        try:
+            wind_df = make_wind_pressure_df(sql, ts)
+            zonal_df = (
+                make_multiqoi_df(zonal_qois, sql, ts)
+                .group_by("datetimes")
+                .agg([pl.mean(i.nickname) for i in zonal_qois])
+            )
+            return wind_df.join(zonal_df, on="datetimes").with_columns(
+                case_name=pl.lit(case_name)
+            )
+        except:
+            return None
 
     # this could potentially be a part of the registry like the environmenal variables
     zonal_qois = [
@@ -86,7 +89,8 @@ def get_temporal_qois(case_names: list[str], sqls: list[Path], ts: TimeSelection
     ]
 
     dfs = [make_case_df(case, sql) for case, sql in zip(case_names, sqls)]
-    case_df = pl.concat(dfs, how="vertical")
+    filter_dfs = [i for i in dfs if i is not None]
+    case_df = pl.concat(filter_dfs, how="vertical")
 
     enviro_df = make_multiqoi_df(QR.site.all, sqls[0], ts).drop("space_names")
 

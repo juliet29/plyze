@@ -24,9 +24,13 @@ publish-tag end:
   git push --tag
   sleep 2
   gh run list
-  #TODO: read from the tags automatically using sed / awk 
-  #
-  #
+  sleep 10
+  gh run list
+
+
+#TODO: read from the tags automatically using sed / awk 
+#
+#
 
 
 #### ======== TESTING SMK  ===============

@@ -67,7 +67,6 @@ def make_eplus_sql_inputs(sample):
     return sql
 
 def extract_from_sql(path: str):
-  print(f"Hi! {Path(path).parts}")
   return Path(subpath(path, ancestor=2)).name
 
 # --------  Further processes -----

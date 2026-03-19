@@ -2,15 +2,6 @@
 configfile: "config/test.yaml"
 
 
-        # """
-        # uv run plyze temporal create \
-        #     --case-names {params.name} \
-        #     --sqls {input.idf} \
-        #     --ts {input.sql} \
-        #     --out-path {output.jpg}
-        # """
-
-
 rule temporal_test_input:
     input:
       samples = [make_eplus_sql_inputs(i) for i in get_eplus_samples_no_wildcard()]
