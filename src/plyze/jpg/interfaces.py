@@ -100,6 +100,9 @@ class JPGraph(nx.Graph):
         return s
 
 
+# TODO: put this in a a separate module for things relating to pydantic.
+
+
 class JPGraphModel(BaseModel):
     graph_name: str
     nodes: list[JPNode]

@@ -32,5 +32,5 @@ class VillaAlpha:
             total_depth=17,
             mean_depth=2.83,
             relative_asymmetry=0.73,
-            control_value={"entry": 0.33, "A": 2.5, "B": 0.33, "F": 0.83},
+            # control_value={"entry": 0.33, "A": 2.5, "B": 0.33, "F": 0.83},
         )

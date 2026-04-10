@@ -1,6 +1,4 @@
 import altair as alt
-import polars as pl
-import numpy as np
 
 import matplotlib.pyplot as plt
 from cyclopts import App
@@ -8,10 +6,9 @@ from loguru import logger
 from utils4plans.logconfig import logset
 
 from plyze.examples.casedata import ex
-from plyze.examples.time_selection import EXAMPLE_TIME_SELECTION as ets
+from plyze.jpg.scalable_graphs import diamond_graph
 from plyze.plots.altair_helpers import AltairRenderers
 from plyze.plots.theme import default_theme
-from plyze.temporal.main import get_temporal_qois
 
 app = App()
 
@@ -23,97 +20,12 @@ def keep():
     ex.sql
 
 
-### ----- DATA --------
+### ------- START COMMANDS ---------
 
 
 @app.command
-def wp():
-    df = get_temporal_qois(["a", "b"], [ex.sql, ex.sql], ets)
-
-    return df.schema
-
-
-@app.command()
-def tconn():
-    lst = np.arange(3)
-    lst1 = np.arange(5, 7)
-    d1 = {"a": lst, "b": lst, "c": lst}
-    d2 = {"a": lst, "b": lst}
-    df1 = pl.DataFrame(d1)
-    df2 = pl.DataFrame(d2)
-    return pl.concat([df1, df2], how="diagonal")
-
-
-# @app.command()
-# def get():
-#     res = get_surface_qois(*ex)
-#     logger.debug(res)
-#     logger.debug(res.columns)
-#
-#
-# @app.command()
-# def cons():
-#     df1 = get_surface_qois(*ex)
-#     df2 = get_surface_qois(*ex)
-#     case_names = ["c1", "c2"]
-#     case_datas = [CaseQOIandData(case, df) for case, df in zip(case_names, [df1, df2])]
-#     df = consolidate_data(case_datas)
-#     logger.debug(df)
-
-
-### ------- SINGLE PLOTS
-
-
-# def plot_vol():
-#     qoid = data_create()
-#     logger.debug(qoid.dataframe)
-#     chart = corr_plot(qoid)
-#     chart.show()
-#
-#
-# @app.command()
-# def plot_surfs():
-#     qoid = custom_qoi()  # data_create()
-#     logger.debug(qoid.dataframe)
-#
-#     chart = surface_corr_plot(qoid)
-#     chart.show()
-
-
-### ------- MULTI PLOTS
-# @app.command()
-# def plot_vol_many():
-#     c = zone_qois(ProjectPaths.sample_idf, ProjectPaths.sample_sql)
-#     c.show()
-#
-#
-# @app.command()
-# def plot_surfs_many():
-#     c = surface_qois(ProjectPaths.sample_idf, ProjectPaths.sample_sql)
-#     c.show()
-
-
-### ------- BIVAR PLORS
-
-### ---- JPG ----
-
-
-### --- CLUSTERING ----
-# @app.command()
-# def kn():
-#     iris = load_iris(as_frame=True)
-#     X = iris.data[["sepal length (cm)"]].to_numpy()
-#     model, labels = fit_samples(X, 3)
-#     logger.debug(model)
-#     logger.debug(labels)
-#     df = prep_cluster_df(X, labels, ["sepal len"])
-#     logger.debug(df)
-#     chart = show_clusters(df, "sepal len")
-#     chart.show()
-
-# model = fit_neighbors(X, 3)
-# return model.predict()
-# return show_neighbors_one(model, [[1]])
+def dg():
+    diamond_graph(11)
 
 
 ### ------- END COMMANDS ---------

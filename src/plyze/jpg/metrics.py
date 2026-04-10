@@ -30,24 +30,25 @@ def calculate_relative_asymmetry(G: JPGraph, mean_depth: float):
     return 2 * (mean_depth - 1) / (G.num_nodes - 2)
 
 
-def calculate_control_value(G: JPGraph):
-    # TODO: fix -> tests not passing...
-    def calc_b_value(node: str):
-        return len(list(G.neighbors(node)))
-
-    def calc_a_value(node: str):
-        nbs = G.neighbors(node)
-
-        cv_a = sum(1 / calc_b_value(b) for b in nbs)
-
-        return cv_a
-
-    control_values = dict()
-
-    for node in G.nodes:
-        control_values[node] = calc_a_value(node)
-
-    return control_values
+# def calculate_control_value(G: JPGraph):
+#     # TODO: fix -> tests not passing...
+#     def calc_b_value(node: str):
+#         return len(list(G.neighbors(node)))
+#
+#     def calc_a_value(node: str):
+#         nbs = G.neighbors(node)
+#
+#         cv_a = sum(1 / calc_b_value(b) for b in nbs)
+#
+#         return cv_a
+#
+#     control_values = dict()
+#
+#     for node in G.nodes:
+#         control_values[node] = calc_a_value(node)
+#
+#     return control_values
+#
 
 
 def calculate_jpg_metrics(G: JPGraph):
