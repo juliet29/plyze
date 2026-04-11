@@ -6,7 +6,7 @@ from loguru import logger
 from utils4plans.logconfig import logset
 
 from plyze.examples.casedata import ex
-from plyze.jpg.scalable_graphs import diamond_graph
+from plyze.jpg.scalable_graphs import determine_node_pairs
 from plyze.plots.altair_helpers import AltairRenderers
 from plyze.plots.theme import default_theme
 
@@ -25,7 +25,9 @@ def keep():
 
 @app.command
 def dg():
-    diamond_graph(11)
+    res = determine_node_pairs(5)
+    logger.debug(res)
+    # calculate_diamond_relative_asymmetry(5)
 
 
 ### ------- END COMMANDS ---------

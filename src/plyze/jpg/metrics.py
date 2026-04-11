@@ -1,9 +1,11 @@
 # each node knows its level
 # metrics taken from Ostwald 2011
 
+from loguru import logger
 from plyze.jpg.interfaces import JPGraph
 from utils4plans.lists import sort_and_group_objects_dict
 from plyze.jpg.interfaces import JPGMetrics
+from plyze.jpg.scalable_graphs import make_diamond_graph
 
 
 def calculate_total_depth(G: JPGraph):
@@ -20,35 +22,31 @@ def calculate_total_depth(G: JPGraph):
     return total_depth
 
 
-def calculate_mean_depth(G: JPGraph, total_depth: float):
-    return total_depth / (
-        G.num_nodes - 1
-    )  # TODO: this should be -1 if the carrier is included as one of the nodes
+def calculate_mean_depth(
+    G: JPGraph, total_depth: float, carrier_node_present: bool = True
+):
+    if carrier_node_present:
+        return total_depth / (
+            G.num_nodes - 1
+        )  # TODO: this should be -1 if the carrier is included as one of the nodes
+    return total_depth / G.num_nodes
 
 
 def calculate_relative_asymmetry(G: JPGraph, mean_depth: float):
     return 2 * (mean_depth - 1) / (G.num_nodes - 2)
 
 
-# def calculate_control_value(G: JPGraph):
-#     # TODO: fix -> tests not passing...
-#     def calc_b_value(node: str):
-#         return len(list(G.neighbors(node)))
-#
-#     def calc_a_value(node: str):
-#         nbs = G.neighbors(node)
-#
-#         cv_a = sum(1 / calc_b_value(b) for b in nbs)
-#
-#         return cv_a
-#
-#     control_values = dict()
-#
-#     for node in G.nodes:
-#         control_values[node] = calc_a_value(node)
-#
-#     return control_values
-#
+def calculate_relative_asymmetry_full(G: JPGraph, carrier_node_present: bool):
+    total_depth = calculate_total_depth(G)
+    mean_depth = calculate_mean_depth(G, total_depth, carrier_node_present)
+    relative_asymmetry = calculate_relative_asymmetry(G, mean_depth)
+    return relative_asymmetry
+
+
+def calculate_diamond_relative_asymmetry(k: int):
+    G = make_diamond_graph(k, True)
+    ra = calculate_relative_asymmetry_full(G, carrier_node_present=False)
+    logger.debug(ra)
 
 
 def calculate_jpg_metrics(G: JPGraph):
@@ -63,5 +61,4 @@ def calculate_jpg_metrics(G: JPGraph):
         total_depth=total_depth,
         mean_depth=mean_depth,
         relative_asymmetry=relative_asymmetry,
-        # control_value=control_value,
     )

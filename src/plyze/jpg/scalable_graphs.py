@@ -1,6 +1,6 @@
 from loguru import logger
 
-from plyze.jpg.interfaces import JPNode, JPNodeData
+from plyze.jpg.interfaces import JPGraph, JPNode, JPNodeData
 
 
 def is_even(k: int):  # TODO: put in utilsl4plans
@@ -19,8 +19,10 @@ def determine_node_pairs(k: int):
     while n >= 1:
         node_nums.append(n)
         levels.append(curr_level)
+        logger.debug(f"num_nodes: {n}, levels: {curr_level}")
 
-        n = n // 2**1
+        # n = math.ceil(n / 2 ** (curr_level))
+        n = n // 2**1  # half on iteration
         curr_level += 1
 
         if n >= 1:
@@ -29,8 +31,6 @@ def determine_node_pairs(k: int):
         if n < 1:
             break
 
-    logger.debug(node_nums)
-    logger.debug(levels)
     return node_nums, levels
 
 
@@ -46,8 +46,6 @@ def determine_mapping(node_nums: list[int], levels: list[int]):
         top_half[max_level + count] = node_num
         count += 1
 
-    logger.debug(top_half)
-    logger.debug(bottom_half)
     return top_half, bottom_half
 
 
@@ -55,13 +53,18 @@ def realize_graph(mapping: dict[int, int]):
     def make_jpnode(name: str, level: int):
         return JPNode(name=name, data=JPNodeData(is_carrier=False, level=level))
 
+    nodes = []
+
     for level, node_num in mapping.items():
         for node in range(node_num):
-            make_jpnode()
-    pass
+            name = f"{level}_{node}"
+            nodes.append(make_jpnode(name, level))
+
+    graph = JPGraph.create("", nodes, [])
+    return graph
 
 
-def diamond_graph(k: int):
+def make_diamond_graph(k: int, debug: bool = False):
     """Creates a scalable justified plan graph with shape of diamond. See Hillier and Hanson 1984, chapter 3, section 2.04. Note that these scalable graphs do not have a "carrier node" and thus have no "level 0". Using floored division to handle non-even values..
 
     Args:
@@ -74,6 +77,9 @@ def diamond_graph(k: int):
 
     node_nums, levels = determine_node_pairs(k)
     top_half, bottom_half = determine_mapping(node_nums, levels)
+    graph = realize_graph(bottom_half | top_half)
 
-    # if not is_even(k):
-    #     raise NotImplementedError(f"k={k} is not even!")
+    if debug:
+        logger.debug(graph.show())
+
+    return graph
