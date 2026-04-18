@@ -1,7 +1,6 @@
 # each node knows its level
 # metrics taken from Ostwald 2011
 
-from loguru import logger
 from plyze.jpg.interfaces import JPGraph
 from utils4plans.lists import sort_and_group_objects_dict
 from plyze.jpg.interfaces import JPGMetrics
@@ -46,7 +45,8 @@ def calculate_relative_asymmetry_full(G: JPGraph, carrier_node_present: bool):
 def calculate_diamond_relative_asymmetry(k: int):
     G = make_diamond_graph(k, True)
     ra = calculate_relative_asymmetry_full(G, carrier_node_present=False)
-    logger.debug(ra)
+
+    return ra
 
 
 def calculate_jpg_metrics(G: JPGraph):

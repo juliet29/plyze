@@ -1,6 +1,7 @@
 from loguru import logger
 
 from plyze.jpg.interfaces import JPGraph, JPNode, JPNodeData
+import math
 
 
 def is_even(k: int):  # TODO: put in utilsl4plans
@@ -22,11 +23,16 @@ def determine_node_pairs(k: int):
         logger.debug(f"num_nodes: {n}, levels: {curr_level}")
 
         # n = math.ceil(n / 2 ** (curr_level))
-        n = n // 2**1  # half on iteration
+        n = math.ceil(n / 2)  # half on iteration
         curr_level += 1
 
-        if n >= 1:
+        if n > 1:
             continue
+
+        elif n == 1:
+            node_nums.append(n)
+            levels.append(curr_level)
+            break
 
         if n < 1:
             break
