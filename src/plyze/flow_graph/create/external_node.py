@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 from plan2eplus.ezcase.ez import EZ
 import xarray as xr
@@ -15,7 +16,7 @@ from plan2eplus.ops.zones.ezobject import Zone
 
 from plyze.qoi.data.interfaces import QOIandData
 from plyze.qoi.registries.main import QOIRegistry
-from plyze.qoi.xarray_helpers import find_drn_in_name
+from plyze.qoi.xarray_helpers import find_drn_in_name, select_time
 
 
 def make_afn_nodes_from_external_nodes(
@@ -44,7 +45,12 @@ def calculate_cardinal_locations(zones: list[Zone], cardinal_expansion_factor):
     return cardinal_locations
 
 
-def make_external_nodes(case: EZ, sql_path: Path, cardinal_expansion_factor: float):
+def make_external_nodes(
+    case: EZ,
+    sql_path: Path,
+    cardinal_expansion_factor: float,
+    dt: list[datetime] = [],
+):
     cardinal_locations = calculate_cardinal_locations(
         case.objects.zones, cardinal_expansion_factor
     )
@@ -52,6 +58,10 @@ def make_external_nodes(case: EZ, sql_path: Path, cardinal_expansion_factor: flo
     wind_pressure = QOIandData(
         QOIRegistry.custom.unique_wind_pressure, sql_path
     ).original_arr
+
+    if dt:
+        wind_pressure = select_time(wind_pressure, dt)
+
     direction_and_data = [
         (find_drn_in_name(name.item()), data)
         for name, data in wind_pressure.groupby("space_names")
