@@ -4,24 +4,8 @@ from pathlib import Path
 from plan2eplus.results.sql import get_qoi
 from plyze.qoi.registries.interfaces import CustomQOIComponents, CustomQOI
 
-# hello
-# @dataclass(frozen=True)
-# class OutgoingFlow(GenericQOI):
-#     name: str
-#
-#     def fx(self, sql_path: Path):
-#         # arr_a = get_qoi(self.components.a, sql_path).data_arr
-#         # need to combine all outgoing flows for a zone and change space names to be zones..
-#         # so here would need the space idfs...
-#         # this could potentially alter the dag...
-#         pass
-
 
 # OTHER FUNCTIONS --- > Modifying the xarray dataarray in some more complex way...
-def get_zone_total_incoming_flow(sql_path: Path):
-    f21 = get_qoi("AFN Linkage Node 2 to Node 1 Volume Flow Rate", sql_path).data_arr
-    # don't want to rely on the IDF, so use the zone temperatures to get the zone names and group together..
-    pass
 
 
 def get_wind_pressure_unique_external_nodes(sql_path: Path):

@@ -5,7 +5,7 @@ import networkx as nx
 import xarray as xr
 from plan2eplus.geometry.coords import Coord
 
-NodeType = Literal["zone", "external_node"]
+NodeType = Literal["zone", "external_node"]  # TODO: this may be a bit redundant..
 
 
 class ZoneNodeData(NamedTuple):
