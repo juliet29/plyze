@@ -7,6 +7,11 @@ from loguru import logger
 from utils4plans.logconfig import logset
 
 from plyze.examples.casedata import example_casedata, example_times
+from plyze.metrics.dominant_external_node import (
+    calc_dominant_node,
+    calc_value_counts,
+    get_max_wind_pressure_at_time,
+)
 from plyze.plots.altair_helpers import AltairRenderers
 from plyze.plots.theme import default_theme
 
@@ -14,11 +19,14 @@ app = App()
 
 
 def keep():
-    _ = example_casedata
     default_theme()
     logger.debug("")
     plt.plot()
-    example_casedata.sql
+
+    _ = example_casedata
+    _ = example_times
+
+    _ = make_flow_graph
 
 
 ### ------- START COMMANDS ---------
@@ -26,11 +34,10 @@ def keep():
 
 @app.command
 def fg():
-    G = make_flow_graph(example_casedata, 1.1, dt=example_times)
-    extn = G.external_nodes[0]
-    print(extn.data.external_wind_pressure.datetimes)
-    # e1 = G.edges_with_data[0]
-    # print(e1)
+    G = make_flow_graph(example_casedata, 1.1, example_times)
+    df_max = get_max_wind_pressure_at_time(G.external_nodes)
+    print(calc_value_counts(df_max))
+    print(calc_dominant_node(df_max))
 
 
 ### ------- END COMMANDS ---------
