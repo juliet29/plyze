@@ -121,7 +121,7 @@ class FlowMetricsCalculator(BaseCalculator):
         )
 
 
-def calc_metrics(G: FlowGraph):
+def make_metrics(G: FlowGraph):
     holder = MetricHolder()
     PlanMetricsCalculator(G, holder)()
     FlowMetricsCalculator(G, holder)()
