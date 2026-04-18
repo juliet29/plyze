@@ -13,19 +13,18 @@ class ZoneNodeData(NamedTuple):
     location: Coord
     area: float
     aspect_ratio: float
-    vent_volume: xr.DataArray
-    mix_volume: xr.DataArray
-    ach: xr.DataArray
+    is_in_afn: bool
 
 
 class ExternalNodeData(NamedTuple):
     type_: NodeType
     location: Coord
     external_wind_pressure: xr.DataArray
+    is_dominant_external_node: bool
 
 
 @dataclass(frozen=True)
-class AFNNode:
+class FlowNode:
     name: str
     data: ExternalNodeData | ZoneNodeData
 
@@ -35,49 +34,45 @@ class AFNNode:
 
 
 @dataclass(frozen=True)
-class ZoneNode(AFNNode):
+class ZoneNode(FlowNode):
     name: str
     data: ZoneNodeData
 
 
 @dataclass(frozen=True)
-class ExternalNode(AFNNode):
+class ExternalNode(FlowNode):
     name: str
     data: ExternalNodeData
 
 
-class AFNEdgeData(NamedTuple):
-    net_flow_rate: xr.DataArray
+class EdgeData(NamedTuple):
+    flow_in: xr.DataArray
+    flow_out: xr.DataArray
 
 
-class AFNEdge(NamedTuple):
+class Edge(NamedTuple):
     u: str
     v: str
-    data: AFNEdgeData
+    data: EdgeData
 
     @property
     def entry(self):
         return (self.u, self.v, {"data": self.data})
 
 
-class BasicEdge(NamedTuple):
-    u: str
-    v: str
+FlowNodeType = TypeVar("FlowNodeType", bound=FlowNode)
 
 
-AFNNodeType = TypeVar("AFNNodeType", bound=AFNNode)
-
-
-class AFNGraph(nx.Graph):
-    def add_afn_nodes(self, nodes: list[AFNNodeType]):
+class FlowGraph(nx.Graph):
+    def add_flow_nodes(self, nodes: list[FlowNodeType]):
         self.add_nodes_from([i.entry for i in nodes])
 
-    def add_afn_edges(self, edges: list[AFNEdge]):
+    def add_flow_edges(self, edges: list[Edge]):
         self.add_edges_from([i.entry for i in edges])
 
     @property
     def edges_with_data(self):
-        edges = [AFNEdge(u, v, data["data"]) for u, v, data in self.edges(data=True)]
+        edges = [Edge(u, v, data["data"]) for u, v, data in self.edges(data=True)]
         return edges
 
     @property
@@ -131,20 +126,3 @@ class AFNGraph(nx.Graph):
         sg = nx.Graph()
         sg.add_nodes_from(self.external_node_names)
         return sg
-
-    def make_time_specific_digraph(self, data: list[float]):
-        # NOTE: this is a bit risky, becasue not sure the egdes and the the data have the same alignment... maybe should take in a list of the edges also.., but its a property, so should only be calculated once, then cached...
-        def make_edge(edge: BasicEdge, datapt: float):
-            if abs(datapt) > 0:
-                return (edge.u, edge.v)
-            else:
-                return (edge.v, edge.u)
-
-        G = nx.DiGraph()
-        edges = [
-            make_edge(BasicEdge(i.u, i.v), datapt)
-            for i, datapt in zip(self.edges_with_data, data)
-        ]
-
-        G.add_edges_from([i for i in edges])
-        return G

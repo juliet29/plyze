@@ -15,6 +15,13 @@ def find_drn_in_name(space_name: str):
         )
 
 
+def get_data_by_space_name(arr: xr.DataArray, name: str):
+    try:
+        return arr.sel(space_names=name.upper())
+    except KeyError:
+        raise Exception(f"Could not find data for {name} in {arr}")
+
+
 def select_time(arr: xr.DataArray, dt: datetime | list[datetime]):
     assert "datetimes" in arr.dims
     return arr.sel(datetimes=dt)

@@ -48,6 +48,7 @@ class CaseQOIandData(NamedTuple):
 
     @classmethod
     def read(cls, path: Path):
+        # TODO: change this to csv -> data is not big enough to warrant parquet files
         case_name = pl.read_parquet_metadata(path)["case_name"]
         dataframe = pl.read_parquet(path)
         return cls(case_name, dataframe)
