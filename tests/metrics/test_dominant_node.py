@@ -3,6 +3,7 @@ from plyze.examples.casedata import example_casedata, example_times
 from plyze.metrics.dominant_external_node import (
     calc_dominant_node,
     get_max_wind_pressure_at_time,
+    separate_dominant_nodes,
 )
 
 
@@ -17,3 +18,7 @@ class TestDominantNode:
     def test_calc_dominant_node(self):
         dom_node = calc_dominant_node(self.df_max)
         assert type(dom_node) is str
+
+    def test_separate_nodes(self):
+        dist_nodes = separate_dominant_nodes(self.G.external_nodes)
+        assert len(dist_nodes.other) == len(self.G.external_nodes) - 1

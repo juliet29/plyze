@@ -20,7 +20,6 @@ class ExternalNodeData(NamedTuple):
     type_: NodeType
     location: Coord
     external_wind_pressure: xr.DataArray
-    is_dominant_external_node: bool
 
 
 @dataclass(frozen=True)

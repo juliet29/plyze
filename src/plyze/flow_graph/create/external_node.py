@@ -30,7 +30,6 @@ def make_afn_nodes_from_external_nodes(
                 direction
             ],  # pyright: ignore[reportArgumentType]
             external_wind_pressure=wind_pressure_data,
-            is_dominant_external_node=False,
         ),
     )
 

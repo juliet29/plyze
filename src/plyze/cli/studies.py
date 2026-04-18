@@ -1,4 +1,5 @@
 import altair as alt
+from rich.pretty import pretty_repr
 from plyze.flow_graph.create.main import make_flow_graph
 
 import matplotlib.pyplot as plt
@@ -7,11 +8,7 @@ from loguru import logger
 from utils4plans.logconfig import logset
 
 from plyze.examples.casedata import example_casedata, example_times
-from plyze.metrics.dominant_external_node import (
-    calc_dominant_node,
-    calc_value_counts,
-    get_max_wind_pressure_at_time,
-)
+from plyze.metrics.interfaces import calc_metrics
 from plyze.plots.altair_helpers import AltairRenderers
 from plyze.plots.theme import default_theme
 
@@ -22,6 +19,8 @@ def keep():
     default_theme()
     logger.debug("")
     plt.plot()
+
+    pretty_repr("")
 
     _ = example_casedata
     _ = example_times
@@ -35,9 +34,9 @@ def keep():
 @app.command
 def fg():
     G = make_flow_graph(example_casedata, 1.1, example_times)
-    df_max = get_max_wind_pressure_at_time(G.external_nodes)
-    print(calc_value_counts(df_max))
-    print(calc_dominant_node(df_max))
+    # gst = create_st_graph(G, "NORTH", "WEST")  # TODO: test!
+    # print(pretty_repr(list(gst.edges)))
+    return calc_metrics(G)
 
 
 ### ------- END COMMANDS ---------

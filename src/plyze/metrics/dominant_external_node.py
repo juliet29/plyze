@@ -1,9 +1,10 @@
+from typing import NamedTuple
 import polars as pl
 
 from plyze.flow_graph.interfaces import ExternalNode
 from plyze.qoi.xarray_helpers import convert_xarray_to_polars
 from plyze.qoi.registries.main import QOIRegistry
-
+from utils4plans.lists import get_unique_one
 
 wp = QOIRegistry.wind_pressure.nickname
 drn = "direction"
@@ -41,3 +42,18 @@ def calc_value_counts(df: pl.DataFrame):
 
 def calc_dominant_node(df: pl.DataFrame):
     return df.select(pl.col(drn_max).mode().first()).to_series().to_list()[0]
+
+
+class DistinguishedExternalNodes(NamedTuple):
+    main: ExternalNode
+    other: list[ExternalNode]
+
+
+def separate_dominant_nodes(nodes: list[ExternalNode]):
+    df_max = get_max_wind_pressure_at_time(nodes)
+    dominant_node_name = calc_dominant_node(df_max)
+    dom_node = get_unique_one(nodes, lambda x: x.name == dominant_node_name)
+
+    other_nodes = [i for i in nodes if not i.name == dominant_node_name]
+
+    return DistinguishedExternalNodes(dom_node, other_nodes)
