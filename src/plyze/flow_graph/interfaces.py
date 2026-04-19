@@ -1,15 +1,12 @@
-from typing import Hashable, Literal, NamedTuple, Sequence, TypeVar
+from typing import Hashable, NamedTuple, Sequence, TypeVar
 from dataclasses import dataclass
 
 import networkx as nx
 import xarray as xr
 from plan2eplus.geometry.coords import Coord
 
-NodeType = Literal["zone", "external_node"]  # TODO: this may be a bit redundant..
-
 
 class ZoneNodeData(NamedTuple):
-    type_: NodeType
     location: Coord
     area: float
     aspect_ratio: float
@@ -17,7 +14,6 @@ class ZoneNodeData(NamedTuple):
 
 
 class ExternalNodeData(NamedTuple):
-    type_: NodeType
     location: Coord
     external_wind_pressure: xr.DataArray
 
@@ -68,6 +64,13 @@ class FlowGraph(nx.Graph):
 
     def add_flow_edges(self, edges: list[Edge]):
         self.add_edges_from([i.entry for i in edges])
+
+    @classmethod
+    def create(cls, nodes: list[FlowNodeType], edges: list[Edge]):
+        G = cls()
+        G.add_flow_nodes(nodes)
+        G.add_flow_edges(edges)
+        return G
 
     @property
     def edges_with_data(self):

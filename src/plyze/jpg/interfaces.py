@@ -54,16 +54,16 @@ class JPGraph(nx.Graph):
         G.graph_name = name
         G.add_jpnodes(nodes)
         if edges:
-            if isinstance(edges[0], Edge):
-                # TODO: figure out how to assert for a group of edges
-                G.add_edges_from(
-                    [
-                        i.as_tuple  # pyright: ignore[reportAttributeAccessIssue]
-                        for i in edges  # pyright: ignore[reportAttributeAccessIssue]
-                    ]
-                )
-            else:
-                G.add_edges_from(edges)  # pyright: ignore[reportArgumentType]
+        if isinstance(edges[0], Edge):
+            # TODO: figure out how to assert for a group of edges
+            G.add_edges_from(
+                [
+                    i.as_tuple  # pyright: ignore[reportAttributeAccessIssue]
+                    for i in edges  # pyright: ignore[reportAttributeAccessIssue]
+                ]
+            )
+        else:
+            G.add_edges_from(edges)  # pyright: ignore[reportArgumentType]
         return G
 
     @property

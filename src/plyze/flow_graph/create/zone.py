@@ -30,7 +30,6 @@ def make_zone_from_node(zone: Zone):
     return ZoneNode(
         zone.room_name,
         data=ZoneNodeData(
-            type_="zone",
             location=domain.centroid,
             area=domain.area,
             aspect_ratio=calculate_domain_aspect_ratio(domain),
