@@ -17,8 +17,13 @@ from plyze.flow_graph.interfaces import (
 )
 
 
+# TODO: move to utils4plans
 def tuple_to_coord(tup: tuple[float, float]):
     return Coord(x=tup[0], y=tup[1])
+
+
+def make_parent_paths(path: Path):
+    path.parent.mkdir(parents=True, exist_ok=True)
 
 
 @dataclass
@@ -27,8 +32,11 @@ class DataWriter:
 
     def write_edge(self, input: Edge):
         name = f"{input.u}__{input.v}"
-        flow_in_path = self.root / name / "flow_in"
-        flow_out_path = self.root / name / "flow_out"
+        flow_in_path = self.root / name / "flow_in.nc"
+        flow_out_path = self.root / name / "flow_out.nc"
+
+        make_parent_paths(flow_in_path)
+        # flow_out_path.parent.mkdir(parents=True, exist_ok=True)
 
         input.data.flow_in.to_netcdf(flow_in_path)
         input.data.flow_out.to_netcdf(flow_out_path)
@@ -36,8 +44,9 @@ class DataWriter:
         return flow_in_path, flow_out_path
 
     def write_external_node(self, input: ExternalNode):
-        path = self.root / input.name / "external_wind_pressure"
+        path = self.root / input.name / "external_wind_pressure.nc"
 
+        make_parent_paths(path)
         input.data.external_wind_pressure.to_netcdf(path)
 
         return path
@@ -156,8 +165,8 @@ class FlowGraphModel(BaseModel):
         return G
 
     @classmethod
-    def write(cls, G: FlowGraph, path: Path):
-        dw = DataWriter(path)
+    def write(cls, G: FlowGraph, json_path: Path, data_path: Path):
+        dw = DataWriter(data_path)
         zone_nodes = [ZoneNodeModel.from_original(dw, i) for i in G.zone_nodes]
         external_nodes = [
             ExternalNodeModel.from_original(dw, i) for i in G.external_nodes
@@ -167,4 +176,4 @@ class FlowGraphModel(BaseModel):
         model = cls.model_validate(
             {"nodes": zone_nodes + external_nodes, "edges": edges}
         )
-        write_json(model.model_dump(), path, OVERWRITE=True)
+        write_json(model.model_dump(mode="json"), json_path, OVERWRITE=True)

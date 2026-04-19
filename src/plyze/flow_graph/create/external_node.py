@@ -25,7 +25,7 @@ def make_afn_nodes_from_external_nodes(
     return ExternalNode(
         direction,
         data=ExternalNodeData(
-            type_="external_node",
+            # type_="external_node",
             location=cardinal_locations[
                 direction
             ],  # pyright: ignore[reportArgumentType]
