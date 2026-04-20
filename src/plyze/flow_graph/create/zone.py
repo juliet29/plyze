@@ -70,7 +70,7 @@ def make_zones_for_graph(case: EZ, sql: Path, dt: list[datetime]):
         QOIandData(i, sql).original_arr
         for i in [QOIRegistry.mix_vol, QOIRegistry.vent_vol, QOIRegistry.temp]
     ]
-
+    # TODO: clean this up!
     arr2 = []
     if dt:
         for i in arr:

@@ -9,7 +9,7 @@ from loguru import logger
 from utils4plans.logconfig import logset
 
 from plyze.examples.casedata import example_casedata, example_times
-from plyze.metrics.interfaces import make_metrics
+from plyze.metrics.calculators import make_metrics
 from plyze.plots.altair_helpers import AltairRenderers
 from plyze.plots.theme import default_theme
 

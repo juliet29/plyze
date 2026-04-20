@@ -6,8 +6,8 @@ from .flow_graph.io import FlowGraphModel
 
 
 # metrics
-from .metrics.interfaces import make_metrics
-from .metrics.interfaces import MetricRegistry
+from .metrics.calculators import make_metrics
+from .metrics.registries import MetricRegistry
 from .metrics.interfaces import MetricHolder
 
 
