@@ -25,3 +25,8 @@ class TestFlowGraph:
         G = make_flow_graph(example_casedata, 1.1, example_times)
         extn = G.external_nodes[0]
         assert len(extn.data.external_wind_pressure.datetimes) == len(example_times)
+
+    def test_datetimes_zones(self):
+        G = make_flow_graph(example_casedata, 1.1, example_times)
+        zone = G.zone_nodes[0]
+        assert len(zone.data.ventilation_volume.datetimes) == len(example_times)

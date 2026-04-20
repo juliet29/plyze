@@ -11,6 +11,9 @@ class ZoneNodeData(NamedTuple):
     area: float
     aspect_ratio: float
     is_in_afn: bool
+    mixing_volume: xr.DataArray
+    ventilation_volume: xr.DataArray
+    temperature: xr.DataArray
 
 
 class ExternalNodeData(NamedTuple):

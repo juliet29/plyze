@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Sequence
+from typing import NamedTuple, Sequence
 import xarray as xr
 from plan2eplus.geometry.coords import Coord
 from pydantic import BaseModel
@@ -26,6 +26,12 @@ def make_parent_paths(path: Path):
     path.parent.mkdir(parents=True, exist_ok=True)
 
 
+class ZoneDataPaths(NamedTuple):
+    mix_vol: Path
+    vent_vol: Path
+    temp: Path
+
+
 @dataclass
 class DataWriter:
     root: Path
@@ -50,6 +56,20 @@ class DataWriter:
         input.data.external_wind_pressure.to_netcdf(path)
 
         return path
+
+    def write_zone(self, input: ZoneNode):
+        vals = [
+            self.root / input.name / i
+            for i in ["mixing_volume.nc", "ventilation_volume.nc", "temperature.nc"]
+        ]
+        paths = ZoneDataPaths(*vals)
+
+        make_parent_paths(paths.vent_vol)
+        input.data.ventilation_volume.to_netcdf(paths.vent_vol)
+        input.data.mixing_volume.to_netcdf(paths.mix_vol)
+        input.data.temperature.to_netcdf(paths.temp)
+
+        return paths
 
 
 class ExternalNodeDataModel(BaseModel):
@@ -88,6 +108,9 @@ class ZoneNodeDataModel(BaseModel):
     area: float
     aspect_ratio: float
     is_in_afn: bool
+    mixing_volume: Path
+    ventilation_volume: Path
+    temperature: Path
 
 
 class ZoneNodeModel(BaseModel):
@@ -96,6 +119,7 @@ class ZoneNodeModel(BaseModel):
 
     @classmethod
     def from_original(cls, dw: DataWriter, zone: ZoneNode):
+        paths = dw.write_zone(zone)
         return cls(
             name=zone.name,
             data=ZoneNodeDataModel(
@@ -103,6 +127,9 @@ class ZoneNodeModel(BaseModel):
                 area=zone.data.area,
                 aspect_ratio=zone.data.aspect_ratio,
                 is_in_afn=zone.data.is_in_afn,
+                mixing_volume=paths.mix_vol,
+                ventilation_volume=paths.vent_vol,
+                temperature=paths.temp,
             ),
         )
 
@@ -114,6 +141,9 @@ class ZoneNodeModel(BaseModel):
                 area=self.data.area,
                 aspect_ratio=self.data.aspect_ratio,
                 is_in_afn=self.data.is_in_afn,
+                mixing_volume=xr.open_dataarray(self.data.mixing_volume),
+                ventilation_volume=xr.open_dataarray(self.data.ventilation_volume),
+                temperature=xr.open_dataarray(self.data.temperature),
             ),
         )
 

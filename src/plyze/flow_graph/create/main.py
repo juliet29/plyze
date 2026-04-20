@@ -15,7 +15,7 @@ def make_flow_graph(
     external_nodes = make_external_nodes(
         case, case_data.sql, cardinal_expansion_factor, dt
     )
-    zones = make_zones_for_graph(case)
+    zones = make_zones_for_graph(case, case_data.sql, dt)
     edges = make_edges_for_graph(case, case_data.sql, dt)
 
     G = FlowGraph()
