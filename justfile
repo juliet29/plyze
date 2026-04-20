@@ -1,5 +1,8 @@
 
 push-tag end:
+  git commit -m "about to push development tag {{end}}"
+  git push
+  
   git tag -a s0.1.{{end}} -m s0.1.{{end}}
   git push --tag
 

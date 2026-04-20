@@ -1,6 +1,10 @@
 from dataclasses import dataclass
+from pathlib import Path
 import networkx as nx
 from typing import Callable, NamedTuple
+
+from pydantic import BaseModel
+from utils4plans.io import read_json, write_json
 from plyze.flow_graph.interfaces import FlowGraph
 from plyze.metrics.dominant_external_node import separate_dominant_nodes
 from plyze.metrics.flow_paths import create_flow_paths
@@ -40,12 +44,23 @@ class MetricRegistry:
     plan = PlanMetricRegistry
 
 
-class MetricHolder:
+class MetricHolder(BaseModel):
     holder_dict: dict[str, float] = {}
 
     def update(self, metric: Metric, value: float):
         # TODO: raise warning on overwrite?
         self.holder_dict[metric.name] = value
+
+    def write(self, path: Path):
+        write_json(self.model_dump(), path, OVERWRITE=True)
+        # df = pl.DataFrame(self.holder_dict)
+        # df.write_csv(path)
+
+    @classmethod
+    def read(cls, path: Path):
+        data = read_json(path)
+        model = cls.model_validate(data)
+        return model
 
 
 # TODO: put in own place..
@@ -125,4 +140,4 @@ def make_metrics(G: FlowGraph):
     holder = MetricHolder()
     PlanMetricsCalculator(G, holder)()
     FlowMetricsCalculator(G, holder)()
-    return holder.holder_dict
+    return holder
