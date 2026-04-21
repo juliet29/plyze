@@ -14,16 +14,17 @@ class TestFlowGraphIO:
     with tempfile.TemporaryDirectory() as td:
         path = Path(td)
         json_path = path / "out.json"
+        data_folder = "data"
 
-    FlowGraphModel.write(
-        G,
-        json_path,
-    )
+        data_path = json_path.parent / data_folder
+    FlowGraphModel.write(G, json_path, data_folder)
 
     def test_write(self):
-        assert len(list(self.path.iterdir())) > 2
+        assert len(list(self.data_path.iterdir())) > 2
 
     def test_read(self):
+        print(list(self.data_path.iterdir()))
+        print(list((self.data_path / "bathroom_5").iterdir()))
         graph = FlowGraphModel.read(self.json_path)
         assert len(graph) > 2
         assert len(graph.zone_nodes) > 2

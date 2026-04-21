@@ -1,5 +1,4 @@
-from dataclasses import dataclass
-from typing import NamedTuple, Sequence, TypeVar
+from typing import Sequence
 import xarray as xr
 from plan2eplus.geometry.coords import Coord
 from pydantic import BaseModel
@@ -15,6 +14,7 @@ from plyze.flow_graph.interfaces import (
     ZoneNode,
     ZoneNodeData,
 )
+from plyze.flow_graph.writer import DataWriter
 
 
 # TODO: move to utils4plans
@@ -22,108 +22,8 @@ def tuple_to_coord(tup: tuple[float, float]):
     return Coord(x=tup[0], y=tup[1])
 
 
-def make_parent_paths(path: Path):
-    path.parent.mkdir(parents=True, exist_ok=True)
-
-
-class GraphPath(NamedTuple):
-    object_name: str
-    qoi_name: str
-
-    def make_json_path(self, folder_name: str):
-        return Path(folder_name) / self.object_name / f"{self.qoi_name}.nc"
-
-    def make_save_path(self, root: Path, folder_name: str):
-        return root / self.make_json_path(folder_name)
-
-
-def make_paths(keys: tuple[str, ...], object_name: str, folder_name: str):
-    return {k: GraphPath(object_name, k).make_json_path(folder_name) for k in keys}
-
-
-class ZoneDataPaths(NamedTuple):
-    mix_vol: Path
-    vent_vol: Path
-    temp: Path
-
-
-class EdgeDataPaths(NamedTuple):
-    flow_in: Path
-    flow_out: Path
-
-    # @classmethod
-    # def keys(cls):
-    #     return list(cls._asdict().keys())
-
-
-class ExternalNodeDataPaths(NamedTuple):
-    external_wind_pressure: Path
-
-
-_T = TypeVar("_T", EdgeDataPaths, ZoneDataPaths, ExternalNodeDataPaths)
-
-
-def make_paths2(
-    ntup: type[_T],
-    object_name: str,
-    root: Path,
-    folder_name: str,
-) -> tuple[_T, _T]:
-    values = [
-        GraphPath(object_name, k).make_json_path(folder_name) for k in ntup._fields
-    ]
-    json_paths: _T = ntup(*values)  # type: ignore[call-arg]
-    root_paths: _T = ntup(*[root / i for i in json_paths])  # type: ignore[call-arg]
-    make_parent_paths(root_paths[0])
-    return json_paths, root_paths
-
-
-@dataclass
-class DataWriter:
-    root: Path
-    folder_name: str
-
-    def write_edge(self, input: Edge):
-        name = f"{input.u}__{input.v}"
-        json_paths, root_paths = make_paths2(
-            EdgeDataPaths, name, self.root, self.folder_name
-        )
-
-        input.data.flow_in.to_netcdf(root_paths.flow_in)
-        input.data.flow_out.to_netcdf(root_paths.flow_out)
-
-        return json_paths
-
-    def write_external_node(self, input: ExternalNode):
-        json_paths, root_paths = make_paths2(
-            ExternalNodeDataPaths, input.name, self.root, self.folder_name
-        )
-
-        input.data.external_wind_pressure.to_netcdf(root_paths.external_wind_pressure)
-        return json_paths
-
-    def write_zone(self, input: ZoneNode):
-        json_paths, root_paths = make_paths2(
-            ZoneDataPaths, input.name, self.root, self.folder_name
-        )
-
-        input.data.ventilation_volume.to_netcdf(root_paths.vent_vol)
-        input.data.mixing_volume.to_netcdf(root_paths.mix_vol)
-        input.data.temperature.to_netcdf(root_paths.temp)
-        return json_paths
-
-        vals = [
-            self.root / input.name / i
-            for i in ["mixing_volume.nc", "ventilation_volume.nc", "temperature.nc"]
-        ]
-        paths = ZoneDataPaths(*vals)
-
-        make_parent_paths(paths.vent_vol)
-        input.data.ventilation_volume.to_netcdf(paths.vent_vol)
-        input.data.mixing_volume.to_netcdf(paths.mix_vol)
-        input.data.temperature.to_netcdf(paths.temp)
-
-        return paths
+def open_xarray(root_path: Path, path: Path):
+    return xr.open_dataarray(root_path / path)
 
 
 class ExternalNodeDataModel(BaseModel):
@@ -137,21 +37,22 @@ class ExternalNodeModel(BaseModel):
 
     @classmethod
     def from_original(cls, dw: DataWriter, node: ExternalNode):
-        path = dw.write_external_node(node)
+        paths = dw.write_external_node(node)
         return cls(
             name=node.name,
             data=ExternalNodeDataModel(
-                location=node.data.location.as_tuple, external_wind_pressure=path
+                location=node.data.location.as_tuple,
+                external_wind_pressure=paths.external_wind_pressure,
             ),
         )
 
-    def to_original(self) -> ExternalNode:
+    def to_original(self, root_path: Path) -> ExternalNode:
         return ExternalNode(
             name=self.name,
             data=ExternalNodeData(
                 location=tuple_to_coord(self.data.location),
-                external_wind_pressure=xr.open_dataarray(
-                    self.data.external_wind_pressure
+                external_wind_pressure=open_xarray(
+                    root_path, self.data.external_wind_pressure
                 ),
             ),
         )
@@ -187,7 +88,7 @@ class ZoneNodeModel(BaseModel):
             ),
         )
 
-    def to_original(self) -> ZoneNode:
+    def to_original(self, root_path: Path) -> ZoneNode:
         return ZoneNode(
             name=self.name,
             data=ZoneNodeData(
@@ -195,9 +96,9 @@ class ZoneNodeModel(BaseModel):
                 area=self.data.area,
                 aspect_ratio=self.data.aspect_ratio,
                 is_in_afn=self.data.is_in_afn,
-                mixing_volume=xr.open_dataarray(self.data.mixing_volume),
-                ventilation_volume=xr.open_dataarray(self.data.ventilation_volume),
-                temperature=xr.open_dataarray(self.data.temperature),
+                mixing_volume=open_xarray(root_path, self.data.mixing_volume),
+                ventilation_volume=open_xarray(root_path, self.data.ventilation_volume),
+                temperature=open_xarray(root_path, self.data.temperature),
             ),
         )
 
@@ -214,23 +115,23 @@ class EdgeModel(BaseModel):
 
     @classmethod
     def from_original(cls, dw: DataWriter, edge: Edge):
-        flow_in, flow_out = dw.write_edge(edge)
+        paths = dw.write_edge(edge)
         return cls(
             u=edge.u,
             v=edge.v,
             data=EdgeDataModel(
-                flow_in=flow_in,
-                flow_out=flow_out,
+                flow_in=paths.flow_in,
+                flow_out=paths.flow_out,
             ),
         )
 
-    def to_original(self) -> Edge:
+    def to_original(self, root_path: Path) -> Edge:
         return Edge(
             u=self.u,
             v=self.v,
             data=EdgeData(
-                flow_in=xr.open_dataarray(self.data.flow_in),
-                flow_out=xr.open_dataarray(self.data.flow_out),
+                flow_in=open_xarray(root_path, self.data.flow_in),
+                flow_out=open_xarray(root_path, self.data.flow_out),
             ),
         )
 
@@ -242,16 +143,17 @@ class FlowGraphModel(BaseModel):
     @classmethod
     def read(cls, path: Path):
         data = read_json(path)
+        root = path.parent
         model = cls.model_validate(data)
-        nodes = [i.to_original() for i in model.nodes]
-        edges = [i.to_original() for i in model.edges]
+        nodes = [i.to_original(root) for i in model.nodes]
+        edges = [i.to_original(root) for i in model.edges]
         G = FlowGraph.create(nodes, edges)
         return G
 
     @classmethod
     def write(cls, G: FlowGraph, json_path: Path, data_folder_name: str):
-        data_path = json_path.parent / data_folder_name
-        dw = DataWriter(data_path)
+        dw = DataWriter(json_path.parent, data_folder_name)
+
         zone_nodes = [ZoneNodeModel.from_original(dw, i) for i in G.zone_nodes]
         external_nodes = [
             ExternalNodeModel.from_original(dw, i) for i in G.external_nodes

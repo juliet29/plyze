@@ -12,7 +12,6 @@ from plyze.examples.casedata import example_casedata, example_times
 from plyze.paths import ProjectPaths
 from plyze.plots.altair_helpers import AltairRenderers
 from plyze.plots.theme import default_theme
-from plyze.qoi_flow_graph.zone_data import extend_zone_data_df, make_enviro
 
 app = App()
 
@@ -34,9 +33,7 @@ def keep():
 @app.command
 def make_flow_graph_example():
     G = make_flow_graph(example_casedata, 1.1, example_times)
-    FlowGraphModel.write(
-        G, ProjectPaths.sample_flow_graph_json, ProjectPaths.sample_flow_graph_dir
-    )
+    FlowGraphModel.write(G, ProjectPaths.sample_flow_graph_json, "data")
 
 
 ### ------- START TEMP COMMANDS ---------
@@ -45,9 +42,11 @@ def make_flow_graph_example():
 @app.command
 def fg():
     G = FlowGraphModel.read(path=ProjectPaths.sample_flow_graph_json)
-    enviro = make_enviro(example_casedata.sql)
-    # return enviro
-    return extend_zone_data_df(G, enviro)
+    print(G)
+    # enviro = make_enviro(example_casedata.sql)
+    # # return enviro
+    # return extend_zone_data_df(G, enviro)
+    #
 
 
 ### ------- END COMMANDS ---------
