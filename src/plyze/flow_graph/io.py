@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import NamedTuple, Sequence
+from typing import NamedTuple, Sequence, TypeVar
 import xarray as xr
 from plan2eplus.geometry.coords import Coord
 from pydantic import BaseModel
@@ -26,38 +26,92 @@ def make_parent_paths(path: Path):
     path.parent.mkdir(parents=True, exist_ok=True)
 
 
+class GraphPath(NamedTuple):
+    object_name: str
+    qoi_name: str
+
+    def make_json_path(self, folder_name: str):
+        return Path(folder_name) / self.object_name / f"{self.qoi_name}.nc"
+
+    def make_save_path(self, root: Path, folder_name: str):
+        return root / self.make_json_path(folder_name)
+
+
+def make_paths(keys: tuple[str, ...], object_name: str, folder_name: str):
+    return {k: GraphPath(object_name, k).make_json_path(folder_name) for k in keys}
+
+
 class ZoneDataPaths(NamedTuple):
     mix_vol: Path
     vent_vol: Path
     temp: Path
 
 
+class EdgeDataPaths(NamedTuple):
+    flow_in: Path
+    flow_out: Path
+
+    # @classmethod
+    # def keys(cls):
+    #     return list(cls._asdict().keys())
+
+
+class ExternalNodeDataPaths(NamedTuple):
+    external_wind_pressure: Path
+
+
+_T = TypeVar("_T", EdgeDataPaths, ZoneDataPaths, ExternalNodeDataPaths)
+
+
+def make_paths2(
+    ntup: type[_T],
+    object_name: str,
+    root: Path,
+    folder_name: str,
+) -> tuple[_T, _T]:
+    values = [
+        GraphPath(object_name, k).make_json_path(folder_name) for k in ntup._fields
+    ]
+    json_paths: _T = ntup(*values)  # type: ignore[call-arg]
+    root_paths: _T = ntup(*[root / i for i in json_paths])  # type: ignore[call-arg]
+    make_parent_paths(root_paths[0])
+    return json_paths, root_paths
+
+
 @dataclass
 class DataWriter:
     root: Path
+    folder_name: str
 
     def write_edge(self, input: Edge):
         name = f"{input.u}__{input.v}"
-        flow_in_path = self.root / name / "flow_in.nc"
-        flow_out_path = self.root / name / "flow_out.nc"
+        json_paths, root_paths = make_paths2(
+            EdgeDataPaths, name, self.root, self.folder_name
+        )
 
-        make_parent_paths(flow_in_path)
-        # flow_out_path.parent.mkdir(parents=True, exist_ok=True)
+        input.data.flow_in.to_netcdf(root_paths.flow_in)
+        input.data.flow_out.to_netcdf(root_paths.flow_out)
 
-        input.data.flow_in.to_netcdf(flow_in_path)
-        input.data.flow_out.to_netcdf(flow_out_path)
-
-        return flow_in_path, flow_out_path
+        return json_paths
 
     def write_external_node(self, input: ExternalNode):
-        path = self.root / input.name / "external_wind_pressure.nc"
+        json_paths, root_paths = make_paths2(
+            ExternalNodeDataPaths, input.name, self.root, self.folder_name
+        )
 
-        make_parent_paths(path)
-        input.data.external_wind_pressure.to_netcdf(path)
-
-        return path
+        input.data.external_wind_pressure.to_netcdf(root_paths.external_wind_pressure)
+        return json_paths
 
     def write_zone(self, input: ZoneNode):
+        json_paths, root_paths = make_paths2(
+            ZoneDataPaths, input.name, self.root, self.folder_name
+        )
+
+        input.data.ventilation_volume.to_netcdf(root_paths.vent_vol)
+        input.data.mixing_volume.to_netcdf(root_paths.mix_vol)
+        input.data.temperature.to_netcdf(root_paths.temp)
+        return json_paths
+
         vals = [
             self.root / input.name / i
             for i in ["mixing_volume.nc", "ventilation_volume.nc", "temperature.nc"]
@@ -195,7 +249,8 @@ class FlowGraphModel(BaseModel):
         return G
 
     @classmethod
-    def write(cls, G: FlowGraph, json_path: Path, data_path: Path):
+    def write(cls, G: FlowGraph, json_path: Path, data_folder_name: str):
+        data_path = json_path.parent / data_folder_name
         dw = DataWriter(data_path)
         zone_nodes = [ZoneNodeModel.from_original(dw, i) for i in G.zone_nodes]
         external_nodes = [

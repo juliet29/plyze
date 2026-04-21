@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import NamedTuple
 from loguru import logger
 import polars as pl
+from plyze.utils import XArrayNames
 from plyze.qoi.data.data import TimeSelection, to_multi_data
 from plyze.qoi.data.interfaces import CaseQOIandData
 from plyze.qoi.registries.main import QOIRegistry as QR
@@ -53,8 +54,8 @@ def consolidate_data(case_datas: list[CaseQOIandData]):
         [i.dataframe.with_columns(case_name=pl.lit(i.case_name)) for i in case_datas]
     )
     expected_num_rows = sum(
-        [i.dataframe["space_names"].unique().len() for i in case_datas]
-        * case_datas[0].dataframe["datetimes"].unique().len()
+        [i.dataframe[XArrayNames.SPACE].unique().len() for i in case_datas]
+        * case_datas[0].dataframe[XArrayNames.DATETIME].unique().len()
     )
     assert df.height == expected_num_rows
     return df

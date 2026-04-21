@@ -18,7 +18,6 @@ class TestFlowGraphIO:
     FlowGraphModel.write(
         G,
         json_path,
-        path,
     )
 
     def test_write(self):

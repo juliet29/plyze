@@ -1,5 +1,5 @@
-import polars as pl
 import altair as alt
+from plyze.flow_graph.io import FlowGraphModel
 from rich.pretty import pretty_repr
 from plyze.flow_graph.create.main import make_flow_graph
 
@@ -9,9 +9,10 @@ from loguru import logger
 from utils4plans.logconfig import logset
 
 from plyze.examples.casedata import example_casedata, example_times
-from plyze.metrics.calculators import make_metrics
+from plyze.paths import ProjectPaths
 from plyze.plots.altair_helpers import AltairRenderers
 from plyze.plots.theme import default_theme
+from plyze.qoi_flow_graph.zone_data import extend_zone_data_df, make_enviro
 
 app = App()
 
@@ -29,16 +30,24 @@ def keep():
     _ = make_flow_graph
 
 
-### ------- START COMMANDS ---------
+### ------- START KEEP COMMANDS ---------
+@app.command
+def make_flow_graph_example():
+    G = make_flow_graph(example_casedata, 1.1, example_times)
+    FlowGraphModel.write(
+        G, ProjectPaths.sample_flow_graph_json, ProjectPaths.sample_flow_graph_dir
+    )
+
+
+### ------- START TEMP COMMANDS ---------
 
 
 @app.command
 def fg():
-    G = make_flow_graph(example_casedata, 1.1, example_times)
-    metrics = make_metrics(G)
-    metrics2 = make_metrics(G)
-    print(metrics)
-    return pl.from_dicts([metrics.holder_dict, metrics2.holder_dict])
+    G = FlowGraphModel.read(path=ProjectPaths.sample_flow_graph_json)
+    enviro = make_enviro(example_casedata.sql)
+    # return enviro
+    return extend_zone_data_df(G, enviro)
 
 
 ### ------- END COMMANDS ---------

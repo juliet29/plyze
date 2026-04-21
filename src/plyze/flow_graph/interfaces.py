@@ -1,9 +1,11 @@
-from typing import Hashable, NamedTuple, Sequence, TypeVar
+from typing import Hashable, Literal, NamedTuple, Sequence, TypeVar
 from dataclasses import dataclass
 
 import networkx as nx
 import xarray as xr
 from plan2eplus.geometry.coords import Coord
+
+ZoneNodeQOINames = Literal["mixing_volume", "ventilation_volume", "temperature"]
 
 
 class ZoneNodeData(NamedTuple):
@@ -14,6 +16,11 @@ class ZoneNodeData(NamedTuple):
     mixing_volume: xr.DataArray
     ventilation_volume: xr.DataArray
     temperature: xr.DataArray
+
+    def get_qoi_array(self, name: ZoneNodeQOINames):
+        val = self._asdict()[name]
+        assert isinstance(val, xr.DataArray)
+        return val
 
 
 class ExternalNodeData(NamedTuple):

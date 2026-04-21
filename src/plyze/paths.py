@@ -16,4 +16,5 @@ class ProjectPaths:
     sample_sql = StaticPaths.inputs / "msd/eplusout.sql"
     sample_idf = StaticPaths.inputs / "msd/run.idf"
 
-    test_write_flow_graph = StaticPaths.temp / "flow_graph"
+    sample_flow_graph_dir = StaticPaths.temp / "flow_graph"
+    sample_flow_graph_json = sample_flow_graph_dir / "out.json"

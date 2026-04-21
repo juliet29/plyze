@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import xarray as xr
 from pathlib import Path
 from plyze.qoi.data.interfaces import QOIandData
+from plyze.utils import XArrayNames
 from plyze.qoi.registries.interfaces import QOIType
 from plyze.qoi.xarray_helpers import convert_xarray_to_polars, select_time
 from datetime import datetime
@@ -49,7 +50,7 @@ def to_dataframe_with_spaces(qoi: QOIType, idf: Path, sql: Path, ts: TimeSelecti
     df = to_dataframe(qoid)
     space_df = create_space_df(idf)
 
-    dd = df.join(space_df, on="space_names")
+    dd = df.join(space_df, on=XArrayNames.SPACE)
     qoid.set_dataframe(dd)
     return qoid
 
@@ -70,7 +71,7 @@ def to_multi_data(qois: Sequence[QOIType], idf: Path, sql: Path, ts: TimeSelecti
 
     d0 = dfs[0]
     for df in dfs[1:]:
-        d0 = d0.join(df, on=["datetimes", "space_names"])
+        d0 = d0.join(df, on=[XArrayNames.DATETIME, XArrayNames.SPACE])
 
     space_df = create_space_df(idf)
-    return d0.join(space_df, on="space_names")
+    return d0.join(space_df, on=XArrayNames.SPACE)

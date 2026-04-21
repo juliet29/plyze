@@ -2,6 +2,7 @@ import polars as pl
 from datetime import datetime
 import xarray as xr
 import re
+from plyze.utils import XArrayNames
 
 
 def find_drn_in_name(space_name: str):
@@ -23,7 +24,7 @@ def get_data_by_space_name(arr: xr.DataArray, name: str):
 
 
 def select_time(arr: xr.DataArray, dt: datetime | list[datetime]):
-    assert "datetimes" in arr.dims
+    assert XArrayNames.DATETIME in arr.dims
     return arr.sel(datetimes=dt)
 
 
@@ -35,3 +36,12 @@ def convert_xarray_to_polars(data: xr.DataArray | xr.Dataset, name=""):
 
 def get_data(arr: xr.DataArray):
     return arr.to_dict()["data"]
+
+
+def get_single_value(arr: xr.DataArray):
+    assert arr.size == 1
+    return float(arr.data)
+
+
+def calc_median(arr: xr.DataArray):
+    return arr.median()

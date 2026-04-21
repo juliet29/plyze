@@ -19,6 +19,15 @@ class FlowMetricRegistry:
     mean_depth_dom_node = Metric("mean_depth_dom_node", "Mean Depth of Dominant Node")
 
 
+class QOIMetricRegistry:
+    median_temp = Metric("median_temp", "Space and Time Median Temperature")
+    median_mix_vol = Metric("median_mix_vol", "Space and Time Median Mixing Volume")
+    median_vent_vol = Metric(
+        "median_vent_vol", "Space and Time Median Ventilation Volume"
+    )
+
+
 class MetricRegistry:
     flow = FlowMetricRegistry
     plan = PlanMetricRegistry
+    qoi = QOIMetricRegistry

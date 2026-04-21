@@ -1,5 +1,6 @@
 import polars as pl
 from plyze.paths import ProjectPaths
+from plyze.utils import XArrayNames
 from plyze.qoi.data.data import to_dataframe_with_spaces, to_multi_data
 from plyze.qoi.data.interfaces import QOIandData
 from plyze.qoi.data.spaces import create_space_df
@@ -10,7 +11,7 @@ from plyze.examples.time_selection import EXAMPLE_TIME_SELECTION
 def test_create_space_df():
     res = create_space_df(ProjectPaths.sample_idf)
     assert isinstance(res, pl.DataFrame)
-    assert res["space_names"].len() > 1
+    assert res[XArrayNames.SPACE].len() > 1
 
 
 def test_qoi_data_creation():
@@ -21,7 +22,7 @@ def test_qoi_data_creation():
         EXAMPLE_TIME_SELECTION,
     )
     assert isinstance(res.dataframe, pl.DataFrame)
-    assert res.dataframe["space_names"].len() > 1
+    assert res.dataframe[XArrayNames.SPACE].len() > 1
 
 
 def test_qoi_data_creation_with_custom_qoi():

@@ -1,4 +1,5 @@
 from datetime import datetime
+from plyze.utils import XArrayNames
 from pathlib import Path
 from plan2eplus.ezcase.ez import EZ
 import xarray as xr
@@ -63,7 +64,7 @@ def make_external_nodes(
 
     direction_and_data = [
         (find_drn_in_name(name.item()), data)
-        for name, data in wind_pressure.groupby("space_names")
+        for name, data in wind_pressure.groupby(XArrayNames.SPACE)
     ]
 
     external_nodes = [
