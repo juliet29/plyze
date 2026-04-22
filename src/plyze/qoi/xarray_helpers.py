@@ -31,7 +31,9 @@ def select_time(arr: xr.DataArray, dt: datetime | list[datetime]):
 def convert_xarray_to_polars(data: xr.DataArray | xr.Dataset, name=""):
     if name:
         data.name = name
-    return pl.from_pandas(data.to_dataframe(), include_index=True)
+    return pl.from_pandas(data.to_dataframe(), include_index=True).with_columns(
+        pl.col(XArrayNames.DATETIME).dt.cast_time_unit("us")
+    )
 
 
 def get_data(arr: xr.DataArray):

@@ -29,10 +29,15 @@ def create_flow_graph_xarray(
     return plan_data
 
 
-def collate_zone_data_to_df(G: FlowGraph):
+def collate_zone_data_to_df(G: FlowGraph, afn_nodes_only: bool = True):
     def make_df(qoi: ZoneNodeQOINames):
+        if afn_nodes_only:
+            nodes = [i for i in G.zone_nodes if i.data.is_in_afn]
+        else:
+            nodes = G.zone_nodes
+
         plan_array = create_flow_graph_xarray(
-            lambda x: x.data.get_qoi_array(qoi), G.zone_nodes
+            lambda x: x.data.get_qoi_array(qoi), nodes
         )
         return convert_xarray_to_polars(plan_array, name=qoi)
 
@@ -52,6 +57,7 @@ class EnvironmentalComparisons(NamedTuple):
 
 
 def make_enviro(sql: Path):
+    # NOTE: just need on sql file that matches the weather of the data being studied!
     e = (
         QOIandData(QOIRegistry.site.t_out, sql).original_arr,
         QOIandData(QOIRegistry.site.wind_speed, sql).original_arr,

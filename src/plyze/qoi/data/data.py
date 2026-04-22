@@ -30,6 +30,7 @@ class TimeSelection:
             datetime(year=self.year, month=self.month, day=i, hour=j)
             for i, j in product(self.days, self.hours)
         ]
+
         return datetimes
 
 
