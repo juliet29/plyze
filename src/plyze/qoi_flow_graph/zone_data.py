@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Callable, NamedTuple, TypeVar, get_args
+from typing import Callable, Literal, NamedTuple, TypeVar, get_args
 import polars as pl
 from plyze.qoi.data.interfaces import QOIandData
 from plyze.qoi.registries.main import QOIRegistry
@@ -118,3 +118,6 @@ def extend_zone_data_df(G: FlowGraph, enviro: EnvironmentalComparisons):
 
     df_fin = pl.concat(dfs, how="align")
     return df_fin
+
+
+EnviroQOINames = Literal["mix_norm", "vent_norm", "temp_norm", "temp_norm_no_scale"]
