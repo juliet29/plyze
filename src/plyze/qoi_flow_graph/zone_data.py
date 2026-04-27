@@ -85,8 +85,6 @@ def calc_enviro_norm(
     d = vn / en
     d.name = name
 
-    print(d)
-
     return d
 
 

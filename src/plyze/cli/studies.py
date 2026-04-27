@@ -9,6 +9,8 @@ from loguru import logger
 from utils4plans.logconfig import logset
 
 from plyze.examples.casedata import example_casedata, example_times
+from plyze.metrics.calculators import make_metrics
+from plyze.metrics.interfaces import MetricHolder
 from plyze.paths import ProjectPaths
 from plyze.plots.altair_helpers import AltairRenderers
 from plyze.plots.theme import default_theme
@@ -42,7 +44,10 @@ def make_flow_graph_example():
 @app.command
 def fg():
     G = FlowGraphModel.read(path=ProjectPaths.sample_flow_graph_json)
-    print(G)
+    holder = MetricHolder()
+    # SpaceTimeQOICalculator(G, holder)()
+    holder = make_metrics(G)
+    logger.debug(holder)
     # enviro = make_enviro(example_casedata.sql)
     # # return enviro
     # return extend_zone_data_df(G, enviro)
