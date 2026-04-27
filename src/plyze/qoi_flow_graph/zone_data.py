@@ -88,9 +88,7 @@ def calc_enviro_norm(
     return d
 
 
-def extend_zone_data_df(G: FlowGraph, enviro: EnvironmentalComparisons):
-    # t_in_t_out = df.select(pl.col(QOIRegistry.temp.nickname)) / enviro.pl_t_out
-
+def make_enviro_norm_data(G: FlowGraph, enviro: EnvironmentalComparisons):
     def make_ds(qoi: ZoneNodeQOINames):
         plan_array = create_flow_graph_xarray(
             lambda x: x.data.get_qoi_array(qoi), G.zone_nodes
@@ -109,6 +107,10 @@ def extend_zone_data_df(G: FlowGraph, enviro: EnvironmentalComparisons):
             "temp_norm_no_scale", make_ds("temperature"), enviro.t_out, norm=False
         ),
     ]
+    return norm_arrays
+
+
+def create_enviro_df(norm_arrays: list[xr.DataArray]):
     dfs = []
     for arr in norm_arrays:
         df = convert_xarray_to_polars(arr, name=str(arr.name))
@@ -116,6 +118,12 @@ def extend_zone_data_df(G: FlowGraph, enviro: EnvironmentalComparisons):
 
     df_fin = pl.concat(dfs, how="align")
     return df_fin
+
+
+def extend_zone_data_to_df(G: FlowGraph, enviro: EnvironmentalComparisons):
+    norm_arrays = make_enviro_norm_data(G, enviro)
+    df = create_enviro_df(norm_arrays)
+    return df
 
 
 EnviroQOINames = Literal["mix_norm", "vent_norm", "temp_norm", "temp_norm_no_scale"]

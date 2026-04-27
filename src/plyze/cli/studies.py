@@ -14,6 +14,7 @@ from plyze.metrics.interfaces import MetricHolder
 from plyze.paths import ProjectPaths
 from plyze.plots.altair_helpers import AltairRenderers
 from plyze.plots.theme import default_theme
+from plyze.qoi_flow_graph.zone_data import make_enviro
 
 app = App()
 
@@ -46,7 +47,8 @@ def fg():
     G = FlowGraphModel.read(path=ProjectPaths.sample_flow_graph_json)
     holder = MetricHolder()
     # SpaceTimeQOICalculator(G, holder)()
-    holder = make_metrics(G)
+    enviro = make_enviro(ProjectPaths.sample_sql)
+    holder = make_metrics(G, enviro)
     logger.debug(holder)
     # enviro = make_enviro(example_casedata.sql)
     # # return enviro

@@ -8,6 +8,7 @@ import statistics
 from plyze.metrics.interfaces import BaseCalculator, MetricHolder
 from plyze.metrics.qoi_calculator import SpaceTimeQOICalculator
 from plyze.metrics.registries import MetricRegistry
+from plyze.qoi_flow_graph.zone_data import EnvironmentalComparisons
 
 
 FMR = MetricRegistry.flow
@@ -64,9 +65,9 @@ class FlowMetricsCalculator(BaseCalculator):
         )
 
 
-def make_metrics(G: FlowGraph):
+def make_metrics(G: FlowGraph, enviro: EnvironmentalComparisons):
     holder = MetricHolder()
     PlanMetricsCalculator(G, holder)()
     FlowMetricsCalculator(G, holder)()
-    SpaceTimeQOICalculator(G, holder)()
+    SpaceTimeQOICalculator(G, holder, enviro)()
     return holder

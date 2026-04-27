@@ -1,6 +1,11 @@
 from dataclasses import dataclass
+import xarray as xr
 from plyze.metrics.registries import MetricRegistry
-from plyze.qoi_flow_graph.zone_data import create_flow_graph_xarray
+from plyze.qoi_flow_graph.zone_data import (
+    EnvironmentalComparisons,
+    create_flow_graph_xarray,
+    make_enviro_norm_data,
+)
 from plyze.utils import XArrayNames
 from plyze.qoi.xarray_helpers import get_single_value
 
@@ -11,20 +16,19 @@ from plyze.flow_graph.interfaces import ZoneNodeQOINames
 QMR = MetricRegistry.qoi
 
 
+def get_space_time_median(arr: xr.DataArray):
+    return get_single_value(arr.median(dim=XArrayNames.SPACE).median())
+
+
 @dataclass
 class SpaceTimeQOICalculator(BaseCalculator):
-    pass
+    enviro: EnvironmentalComparisons
 
     def compute_median_values(self, zone_qoi: ZoneNodeQOINames):
         plan_data = create_flow_graph_xarray(
             lambda x: x.data.get_qoi_array(zone_qoi), self.G.zone_nodes
         )
-
-        # plan_data = xr.concat(
-        #     [i.data.get_qoi_array(zone_qoi) for i in self.G.zone_nodes],
-        #     dim=XArrayNames.SPACE,
-        # )
-        return get_single_value(plan_data.median(dim=XArrayNames.SPACE).median())
+        return get_space_time_median(plan_data)
 
     def calc_median_values_all_qoi(self):
         self.register(QMR.median_mix_vol, self.compute_median_values("mixing_volume"))
@@ -33,5 +37,15 @@ class SpaceTimeQOICalculator(BaseCalculator):
         )
         self.register(QMR.median_temp, self.compute_median_values("temperature"))
 
+    def calc_median_values_env_qoi(self):
+        norm_arrays = make_enviro_norm_data(self.G, self.enviro)
+        medians = [get_space_time_median(i) for i in norm_arrays]
+        self.register(QMR.median_norm_mix_vol, medians[0])
+        self.register(QMR.median_norm_vent_vol, medians[1])
+        self.register(QMR.median_norm_temp, medians[2])
+        self.register(QMR.median_norm_temp_no_scale, medians[3])
+
     def run(self):
-        return self.calculate([self.calc_median_values_all_qoi])
+        return self.calculate(
+            [self.calc_median_values_all_qoi, self.calc_median_values_env_qoi]
+        )

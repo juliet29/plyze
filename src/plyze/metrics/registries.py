@@ -26,6 +26,17 @@ class QOIMetricRegistry:
         "median_vent_vol", "Space and Time Median Ventilation Volume"
     )
 
+    median_norm_vent_vol = Metric(
+        "median_norm_vent_vol", "Space and Time Median Ventilation Volume"
+    )
+    median_norm_mix_vol = Metric(
+        "median_norm_mix_vol", "Space and Time Median Mixing Volume"
+    )
+    median_norm_temp = Metric("median_norm_temp", "Space and Time Median Temperature")
+    median_norm_temp_no_scale = Metric(
+        "median_norm_temp_no_scale", "Space and Time Median Temperature (No Scale)"
+    )
+
 
 class MetricRegistry:
     flow = FlowMetricRegistry
