@@ -23,6 +23,7 @@ def make_edge_from_surface(
         data=EdgeData(
             flow_in=get_data_by_space_name(flow_in, afn_surface.name),
             flow_out=get_data_by_space_name(flow_out, afn_surface.name),
+            surface_area=afn_surface.domain.area,
         ),
     )
 

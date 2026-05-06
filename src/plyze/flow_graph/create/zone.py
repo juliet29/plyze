@@ -57,6 +57,7 @@ def make_zone_from_node(
     )
 
 
+# TODO: evaluate if this should be in interfaces or not..
 class ZoneDataArray(NamedTuple):
     mix_vol: xr.DataArray
     vent_vol: xr.DataArray

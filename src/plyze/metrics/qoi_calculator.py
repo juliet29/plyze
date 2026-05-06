@@ -1,9 +1,12 @@
+# TODO: delete will be replaced by flow_graph_qoi/graph_qoi.py
 from dataclasses import dataclass
 import xarray as xr
 from plyze.metrics.registries import MetricRegistry
 from plyze.qoi_flow_graph.zone_data import (
-    EnvironmentalComparisons,
     create_flow_graph_xarray,
+)
+from plyze.qoi_flow_graph.dim_zone_data import (
+    EnvironmentalComparisons,
     make_enviro_norm_data,
 )
 from plyze.utils import XArrayNames

@@ -9,6 +9,7 @@ from plyze.qoi.registries.interfaces import CustomQOIComponents, CustomQOI
 
 
 def get_wind_pressure_unique_external_nodes(sql_path: Path):
+    # TODO: make this depend on the values instead?
     wind_pressure = get_qoi("AFN Node Wind Pressure", sql_path).data_arr
 
     grouped_space_names = sort_and_group_objects(

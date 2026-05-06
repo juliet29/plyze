@@ -1,11 +1,18 @@
-from typing import Hashable, Literal, NamedTuple, Sequence, TypeVar
+from typing import Any, Hashable, Literal, NamedTuple, Sequence, TypeVar
 from dataclasses import dataclass
 
 import networkx as nx
+from utils4plans.sets import set_equality
 import xarray as xr
 from plan2eplus.geometry.coords import Coord
 
 ZoneNodeQOINames = Literal["mixing_volume", "ventilation_volume", "temperature"]
+
+
+class AmbientData(NamedTuple):
+    t_out: xr.DataArray
+    wind_speed: xr.DataArray
+    wind_direction: xr.DataArray
 
 
 class ZoneNodeData(NamedTuple):
@@ -16,6 +23,12 @@ class ZoneNodeData(NamedTuple):
     mixing_volume: xr.DataArray
     ventilation_volume: xr.DataArray
     temperature: xr.DataArray
+    # adjacent_surfaces: list[str]
+    # sum_flow_in: xr.DataArray
+    # sum_flow_out: xr.DataArray
+    # dim_flow_in: xr.DataArray
+    # dim_flow_out: xr.DataArray
+    # dim_temp: xr.DataArray
 
     def get_qoi_array(self, name: ZoneNodeQOINames):
         val = self._asdict()[name]
@@ -53,12 +66,24 @@ class ExternalNode(FlowNode):
 class EdgeData(NamedTuple):
     flow_in: xr.DataArray
     flow_out: xr.DataArray
+    surface_area: float
 
 
 class Edge(NamedTuple):
     u: str
     v: str
     data: EdgeData
+
+    def __hash__(self) -> int:
+        return hash(frozenset((self.u, self.v)))
+
+    def __eq__(self, other: Any):
+        if isinstance(other, Edge):
+            return self.u == other.u and self.v == other.v
+        elif isinstance(other, tuple):
+            assert len(other) == 2
+            return set_equality([self.u, self.v], other)
+        raise ValueError(f"{other} does not have an appropriate type!")
 
     @property
     def entry(self):
@@ -69,6 +94,10 @@ FlowNodeType = TypeVar("FlowNodeType", bound=FlowNode)
 
 
 class FlowGraph(nx.Graph):
+    def __init__(self, ambient_data: AmbientData) -> None:
+        self.ambient_data = ambient_data
+
+    # TODO: ambient data
     def add_flow_nodes(self, nodes: list[FlowNodeType]):
         self.add_nodes_from([i.entry for i in nodes])
 
@@ -76,8 +105,10 @@ class FlowGraph(nx.Graph):
         self.add_edges_from([i.entry for i in edges])
 
     @classmethod
-    def create(cls, nodes: list[FlowNodeType], edges: list[Edge]):
-        G = cls()
+    def create(
+        cls, nodes: list[FlowNodeType], edges: list[Edge], ambient_data: AmbientData
+    ):
+        G = cls(ambient_data)
         G.add_flow_nodes(nodes)
         G.add_flow_edges(edges)
         return G
@@ -138,3 +169,7 @@ class FlowGraph(nx.Graph):
         sg = nx.Graph()
         sg.add_nodes_from(self.external_node_names)
         return sg
+
+    def get_edges_of_zone(self, zone: ZoneNode):
+        e = self.edges(zone.name)
+        return [i for i in e]

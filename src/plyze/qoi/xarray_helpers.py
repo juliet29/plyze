@@ -5,6 +5,14 @@ import re
 from plyze.utils import XArrayNames
 
 
+def normalize_xarray_min_max(da: xr.DataArray):
+    da_min = da.min()
+    da_max = da.max()
+
+    da_norm = (da - da_min) / (da_max - da_min)
+    return da_norm
+
+
 def find_drn_in_name(space_name: str):
     pattern = re.compile("(NORTH)|(SOUTH)|(EAST)|(WEST)")
     res = pattern.search(space_name.upper())

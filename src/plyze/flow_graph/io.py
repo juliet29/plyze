@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from pathlib import Path
 from utils4plans.io import read_json, write_json
 
+from plyze.flow_graph.create.main import make_ambient_data
 from plyze.flow_graph.interfaces import (
     Edge,
     EdgeData,
@@ -106,6 +107,7 @@ class ZoneNodeModel(BaseModel):
 class EdgeDataModel(BaseModel):
     flow_in: Path
     flow_out: Path
+    surface_area: float
 
 
 class EdgeModel(BaseModel):
@@ -122,6 +124,7 @@ class EdgeModel(BaseModel):
             data=EdgeDataModel(
                 flow_in=paths.flow_in,
                 flow_out=paths.flow_out,
+                surface_area=edge.data.surface_area,
             ),
         )
 
@@ -132,6 +135,7 @@ class EdgeModel(BaseModel):
             data=EdgeData(
                 flow_in=open_xarray(root_path, self.data.flow_in),
                 flow_out=open_xarray(root_path, self.data.flow_out),
+                surface_area=self.data.surface_area,
             ),
         )
 
@@ -141,17 +145,20 @@ class FlowGraphModel(BaseModel):
     edges: list[EdgeModel]
 
     @classmethod
-    def read(cls, path: Path):
+    def read(cls, path: Path, sql: Path):
         data = read_json(path)
         root = path.parent
         model = cls.model_validate(data)
         nodes = [i.to_original(root) for i in model.nodes]
         edges = [i.to_original(root) for i in model.edges]
-        G = FlowGraph.create(nodes, edges)
+        G = FlowGraph.create(nodes, edges, make_ambient_data(sql))
+        # TODO: this shouldnt depend on an outside sql file
         return G
 
     @classmethod
     def write(cls, G: FlowGraph, json_path: Path, data_folder_name: str):
+        # TODO: think about how will write the ambient data, if want to write that..
+        # or should a path to the sql file be stored?
         dw = DataWriter(json_path.parent, data_folder_name)
 
         zone_nodes = [ZoneNodeModel.from_original(dw, i) for i in G.zone_nodes]

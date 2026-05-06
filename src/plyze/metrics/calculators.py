@@ -8,7 +8,7 @@ import statistics
 from plyze.metrics.interfaces import BaseCalculator, MetricHolder
 from plyze.metrics.qoi_calculator import SpaceTimeQOICalculator
 from plyze.metrics.registries import MetricRegistry
-from plyze.qoi_flow_graph.zone_data import EnvironmentalComparisons
+from plyze.qoi_flow_graph.dim_zone_data import EnvironmentalComparisons
 
 
 FMR = MetricRegistry.flow

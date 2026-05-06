@@ -3,7 +3,7 @@ from plyze.examples.casedata import example_casedata, example_times
 from plyze.metrics.interfaces import MetricHolder
 from plyze.metrics.qoi_calculator import SpaceTimeQOICalculator
 from plyze.paths import ProjectPaths
-from plyze.qoi_flow_graph.zone_data import make_enviro
+from plyze.qoi_flow_graph.dim_zone_data import make_enviro
 
 
 class TestSpaceTimeCalculator:
