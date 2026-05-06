@@ -53,6 +53,7 @@ def make_zone_from_node(
             mixing_volume=get_data_by_space_name(mixing_volume, zone_name),
             ventilation_volume=get_data_by_space_name(ventilation_volume, zone_name),
             temperature=get_data_by_space_name(temperature, zone_name),
+            computed_data=None,
         ),
     )
 

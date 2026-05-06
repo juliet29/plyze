@@ -4,7 +4,12 @@ from plan2eplus.ezcase.ez import EZ
 from plyze.flow_graph.create.edge import make_edges_for_graph
 from plyze.flow_graph.create.external_node import make_external_nodes
 from plyze.flow_graph.create.zone import make_zones_for_graph
-from plyze.flow_graph.interfaces import AmbientData, FlowGraph
+from plyze.flow_graph.interfaces import (
+    AmbientData,
+    FlowGraph,
+    ZoneComputedData,
+    ZoneNode,
+)
 from plyze.qoi.data.interfaces import QOIandData
 from plyze.qoi.registries.main import QOIRegistry
 from plyze.qoi.xarray_helpers import select_time
@@ -26,6 +31,20 @@ def make_ambient_data(sql: Path, dt: list[datetime] = []):
     return ambient_data
 
 
+def update_zone_qois(G: FlowGraph, ambient_data: AmbientData):
+    def update(zone: ZoneNode):
+        new_qoi_calculator = GraphQOICalculator(GraphQOIHolder(), G, zone, ambient_data)
+        new_qoi_calculator.run()
+        holder = new_qoi_calculator.holder.holder_dict
+        # TODO: in-place transformation could be cleaned up..
+        zone.data.update_computed_data(ZoneComputedData(**holder))
+
+    for zone_node in G.zone_nodes:
+        update(zone_node)
+
+    return G.zone_nodes
+
+
 def make_flow_graph(
     case_data: CaseData, cardinal_expansion_factor: float, dt: list[datetime] = []
 ):
@@ -41,12 +60,6 @@ def make_flow_graph(
     G.add_flow_nodes(external_nodes + zones)
     G.add_flow_edges(edges)
 
+    update_zone_qois(G, make_ambient_data(case_data.sql, dt))
+
     return G
-
-
-def update_zone_qois(G: FlowGraph, ambient_data: AmbientData):
-    zone = G.zone_nodes[-1]
-    new_qoi_calculator = GraphQOICalculator(GraphQOIHolder(), G, zone, ambient_data)
-    new_qoi_calculator.run()
-    holder = new_qoi_calculator.holder.holder_dict
-    return holder

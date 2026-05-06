@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import xarray as xr
 from loguru import logger
 from plyze.flow_graph.interfaces import AmbientData, FlowGraph, ZoneNode
 from plyze.qoi_flow_graph.graph_qoi_interfaces import (
@@ -19,18 +20,22 @@ class GraphQOICalculator(GraphQOIBaseCalculator):
         # TODO: test that can get the correct edges..
         edges = self.G.get_edges_of_zone(self.zone)
         logger.debug(edges)
-        logger.debug(type(edges[0]))
+        # logger.debug(type(edges[0]))
         e = [i for i in self.G.edges_with_data if i in edges]
         return e
 
     def comp_flow_in(self):
         flow_in_data = [i.data.flow_in for i in self.zone_edges]
+        if not self.zone_edges:
+            return xr.zeros_like(self.ambient_data.t_out)
         return GraphQOIRegistry.zone_inflow.fx(flow_in_data)
 
     # TODO: make sure this function returns a data array -> check that inputs are aligned on the other edges => should all have the same datatime reporting.. may have to cllapse space metrics
 
     def comp_flow_out(self):
         flow_out_data = [i.data.flow_out for i in self.zone_edges]
+        if not self.zone_edges:
+            return xr.zeros_like(self.ambient_data.t_out)
         return GraphQOIRegistry.zone_outflow.fx(flow_out_data)
 
     def calculate_zone_accum_flow(self):

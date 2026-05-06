@@ -15,7 +15,15 @@ class AmbientData(NamedTuple):
     wind_direction: xr.DataArray
 
 
-class ZoneNodeData(NamedTuple):
+class ZoneComputedData(NamedTuple):
+    zone_inflow: xr.DataArray
+    zone_outflow: xr.DataArray
+    zone_dimless_flow: xr.DataArray
+    zone_dimless_temp: xr.DataArray
+
+
+@dataclass
+class ZoneNodeData:
     location: Coord
     area: float
     aspect_ratio: float
@@ -23,17 +31,15 @@ class ZoneNodeData(NamedTuple):
     mixing_volume: xr.DataArray
     ventilation_volume: xr.DataArray
     temperature: xr.DataArray
-    # adjacent_surfaces: list[str]
-    # sum_flow_in: xr.DataArray
-    # sum_flow_out: xr.DataArray
-    # dim_flow_in: xr.DataArray
-    # dim_flow_out: xr.DataArray
-    # dim_temp: xr.DataArray
+    computed_data: ZoneComputedData | None = None
 
     def get_qoi_array(self, name: ZoneNodeQOINames):
-        val = self._asdict()[name]
+        val = self.__dict__[name]
         assert isinstance(val, xr.DataArray)
         return val
+
+    def update_computed_data(self, data: ZoneComputedData):
+        self.computed_data = data
 
 
 class ExternalNodeData(NamedTuple):

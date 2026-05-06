@@ -37,3 +37,9 @@ class TestFlowGraphDateTimes:
     def test_datetimes_zones(self):
         zone = self.G.zone_nodes[0]
         assert len(zone.data.ventilation_volume.datetimes) == len(example_times)
+
+    def test_update_zone_qois(self):
+
+        zone = self.G.zone_nodes[-1]
+        assert zone.data.computed_data
+        assert len(zone.data.computed_data.zone_dimless_flow) == len(example_times)

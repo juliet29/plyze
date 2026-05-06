@@ -52,7 +52,8 @@ def ad():
 def fg():
     G = FlowGraphModel.read(path=ProjectPaths.sample_flow_graph_json)
     ambient_data = make_ambient_data(example_casedata.sql, example_times)
-    return update_zone_qois(G, ambient_data)
+    res = update_zone_qois(G, ambient_data)
+    return G.zone_nodes
     # zone = G.zone_nodes[-1]
     # return GraphQOICalculator(GraphQOIHolder(), G, zone).zone_edges
 
