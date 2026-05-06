@@ -11,6 +11,7 @@ from plyze.flow_graph.interfaces import (
     ExternalNode,
     ExternalNodeData,
     FlowGraph,
+    ZoneComputedData,
     ZoneNode,
     ZoneNodeData,
 )
@@ -58,6 +59,13 @@ class ExternalNodeModel(BaseModel):
         )
 
 
+class ZoneComputedDataModel(BaseModel):
+    zone_inflow: Path
+    zone_outflow: Path
+    zone_dimless_flow: Path
+    zone_dimless_temp: Path
+
+
 class ZoneNodeDataModel(BaseModel):
     location: Coord
     area: float
@@ -66,6 +74,7 @@ class ZoneNodeDataModel(BaseModel):
     mixing_volume: Path
     ventilation_volume: Path
     temperature: Path
+    computed_data: ZoneComputedDataModel
 
 
 class ZoneNodeModel(BaseModel):
@@ -75,6 +84,7 @@ class ZoneNodeModel(BaseModel):
     @classmethod
     def from_original(cls, dw: DataWriter, zone: ZoneNode):
         paths = dw.write_zone(zone)
+        computed_paths = dw.write_computed_zone(zone)
         return cls(
             name=zone.name,
             data=ZoneNodeDataModel(
@@ -85,10 +95,26 @@ class ZoneNodeModel(BaseModel):
                 mixing_volume=paths.mix_vol,
                 ventilation_volume=paths.vent_vol,
                 temperature=paths.temp,
+                computed_data=ZoneComputedDataModel(
+                    zone_inflow=computed_paths.zone_inflow,
+                    zone_outflow=computed_paths.zone_outflow,
+                    zone_dimless_flow=computed_paths.zone_dimless_flow,
+                    zone_dimless_temp=computed_paths.zone_dimless_temp,
+                ),
             ),
         )
 
     def to_original(self, root_path: Path) -> ZoneNode:
+        computed_data = ZoneComputedData(
+            zone_inflow=open_xarray(root_path, self.data.computed_data.zone_inflow),
+            zone_outflow=open_xarray(root_path, self.data.computed_data.zone_outflow),
+            zone_dimless_flow=open_xarray(
+                root_path, self.data.computed_data.zone_dimless_flow
+            ),
+            zone_dimless_temp=open_xarray(
+                root_path, self.data.computed_data.zone_dimless_temp
+            ),
+        )
         return ZoneNode(
             name=self.name,
             data=ZoneNodeData(
@@ -99,6 +125,7 @@ class ZoneNodeModel(BaseModel):
                 mixing_volume=open_xarray(root_path, self.data.mixing_volume),
                 ventilation_volume=open_xarray(root_path, self.data.ventilation_volume),
                 temperature=open_xarray(root_path, self.data.temperature),
+                computed_data=computed_data,
             ),
         )
 

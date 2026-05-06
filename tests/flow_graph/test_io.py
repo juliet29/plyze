@@ -28,3 +28,9 @@ class TestFlowGraphIO:
         graph = FlowGraphModel.read(self.json_path)
         assert len(graph) > 2
         assert len(graph.zone_nodes) > 2
+
+    def test_read_computed(self):
+        graph = FlowGraphModel.read(self.json_path)
+        zone = graph.zone_nodes[-1]
+        assert zone.data.computed_data
+        assert zone.data.computed_data.zone_dimless_flow.max() > 0

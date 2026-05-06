@@ -29,8 +29,15 @@ class GraphPath(NamedTuple):
     #
 
 
-def make_paths(keys: tuple[str, ...], object_name: str, folder_name: str):
-    return {k: GraphPath(object_name, k).make_json_path(folder_name) for k in keys}
+# def make_paths(keys: tuple[str, ...], object_name: str, folder_name: str):
+#     return {k: GraphPath(object_name, k).make_json_path(folder_name) for k in keys}
+
+
+class ZoneComputedDataPaths(NamedTuple):
+    zone_inflow: Path
+    zone_outflow: Path
+    zone_dimless_flow: Path
+    zone_dimless_temp: Path
 
 
 class ZoneDataPaths(NamedTuple):
@@ -52,10 +59,12 @@ class ExternalNodeDataPaths(NamedTuple):
     external_wind_pressure: Path
 
 
-_T = TypeVar("_T", EdgeDataPaths, ZoneDataPaths, ExternalNodeDataPaths)
+_T = TypeVar(
+    "_T", EdgeDataPaths, ZoneDataPaths, ExternalNodeDataPaths, ZoneComputedDataPaths
+)
 
 
-def make_paths2(
+def make_paths(
     ntup: type[_T],
     object_name: str,
     root: Path,
@@ -78,7 +87,7 @@ class DataWriter:
 
     def write_edge(self, input: Edge):
         name = f"{input.u}__{input.v}"
-        json_paths, root_paths = make_paths2(
+        json_paths, root_paths = make_paths(
             EdgeDataPaths, name, self.root, self.folder_name
         )
 
@@ -88,7 +97,7 @@ class DataWriter:
         return json_paths
 
     def write_external_node(self, input: ExternalNode):
-        json_paths, root_paths = make_paths2(
+        json_paths, root_paths = make_paths(
             ExternalNodeDataPaths, input.name, self.root, self.folder_name
         )
 
@@ -96,11 +105,28 @@ class DataWriter:
         return json_paths
 
     def write_zone(self, input: ZoneNode):
-        json_paths, root_paths = make_paths2(
+        json_paths, root_paths = make_paths(
             ZoneDataPaths, input.name, self.root, self.folder_name
         )
 
         input.data.ventilation_volume.to_netcdf(root_paths.vent_vol)
         input.data.mixing_volume.to_netcdf(root_paths.mix_vol)
         input.data.temperature.to_netcdf(root_paths.temp)
+        return json_paths
+
+    def write_computed_zone(self, input: ZoneNode):
+        json_paths, root_paths = make_paths(
+            ZoneComputedDataPaths, input.name, self.root, self.folder_name
+        )
+        assert input.data.computed_data
+
+        input.data.computed_data.zone_inflow.to_netcdf(root_paths.zone_inflow)
+        input.data.computed_data.zone_outflow.to_netcdf(root_paths.zone_outflow)
+        input.data.computed_data.zone_dimless_flow.to_netcdf(
+            root_paths.zone_dimless_flow
+        )
+        input.data.computed_data.zone_dimless_temp.to_netcdf(
+            root_paths.zone_dimless_temp
+        )
+
         return json_paths

@@ -4,7 +4,6 @@ from rich.pretty import pretty_repr
 from plyze.flow_graph.create.main import (
     make_ambient_data,
     make_flow_graph,
-    update_zone_qois,
 )
 
 import matplotlib.pyplot as plt
@@ -51,8 +50,8 @@ def ad():
 @app.command
 def fg():
     G = FlowGraphModel.read(path=ProjectPaths.sample_flow_graph_json)
-    ambient_data = make_ambient_data(example_casedata.sql, example_times)
-    res = update_zone_qois(G, ambient_data)
+    # ambient_data = make_ambient_data(example_casedata.sql, example_times)
+    # res = update_zone_qois(G, ambient_data)
     return G.zone_nodes
     # zone = G.zone_nodes[-1]
     # return GraphQOICalculator(GraphQOIHolder(), G, zone).zone_edges
