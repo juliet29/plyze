@@ -46,4 +46,5 @@ def collate_zone_data_to_df(G: FlowGraph, afn_nodes_only: bool = True):
     return df
 
 
+# More QOIS -> not stored on the nodes # TODO: add to QOI registry?
 #

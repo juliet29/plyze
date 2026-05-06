@@ -1,7 +1,11 @@
 import altair as alt
 from plyze.flow_graph.io import FlowGraphModel
 from rich.pretty import pretty_repr
-from plyze.flow_graph.create.main import make_flow_graph
+from plyze.flow_graph.create.main import (
+    make_ambient_data,
+    make_flow_graph,
+    update_zone_qois,
+)
 
 import matplotlib.pyplot as plt
 from cyclopts import App
@@ -40,12 +44,15 @@ def make_flow_graph_example():
 
 
 @app.command
+def ad():
+    return make_ambient_data(example_casedata.sql)
+
+
+@app.command
 def fg():
-    G = FlowGraphModel.read(
-        path=ProjectPaths.sample_flow_graph_json, sql=example_casedata.sql
-    )
-    return G.ambient_data
-    # return update_zone_qois(G)
+    G = FlowGraphModel.read(path=ProjectPaths.sample_flow_graph_json)
+    ambient_data = make_ambient_data(example_casedata.sql, example_times)
+    return update_zone_qois(G, ambient_data)
     # zone = G.zone_nodes[-1]
     # return GraphQOICalculator(GraphQOIHolder(), G, zone).zone_edges
 

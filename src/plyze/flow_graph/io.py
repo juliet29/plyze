@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from pathlib import Path
 from utils4plans.io import read_json, write_json
 
-from plyze.flow_graph.create.main import make_ambient_data
 from plyze.flow_graph.interfaces import (
     Edge,
     EdgeData,
@@ -145,13 +144,13 @@ class FlowGraphModel(BaseModel):
     edges: list[EdgeModel]
 
     @classmethod
-    def read(cls, path: Path, sql: Path):
+    def read(cls, path: Path):
         data = read_json(path)
         root = path.parent
         model = cls.model_validate(data)
         nodes = [i.to_original(root) for i in model.nodes]
         edges = [i.to_original(root) for i in model.edges]
-        G = FlowGraph.create(nodes, edges, make_ambient_data(sql))
+        G = FlowGraph.create(nodes, edges)
         # TODO: this shouldnt depend on an outside sql file
         return G
 

@@ -11,6 +11,7 @@ from plyze.qoi.registries.interfaces import EpQOI, CustomQOI, QOIType
 class QOIandData:
     qoi: QOIType
     sql_path: Path
+    # TODO: get rid of this original arr / arr distinction.. not doing computation here.. do better job of getting space names
     arr: xr.DataArray | None = None
     dataframe: pl.DataFrame | None = None
 

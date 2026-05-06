@@ -94,8 +94,6 @@ FlowNodeType = TypeVar("FlowNodeType", bound=FlowNode)
 
 
 class FlowGraph(nx.Graph):
-    def __init__(self, ambient_data: AmbientData) -> None:
-        self.ambient_data = ambient_data
 
     # TODO: ambient data
     def add_flow_nodes(self, nodes: list[FlowNodeType]):
@@ -106,9 +104,11 @@ class FlowGraph(nx.Graph):
 
     @classmethod
     def create(
-        cls, nodes: list[FlowNodeType], edges: list[Edge], ambient_data: AmbientData
+        cls,
+        nodes: list[FlowNodeType],
+        edges: list[Edge],
     ):
-        G = cls(ambient_data)
+        G = cls()
         G.add_flow_nodes(nodes)
         G.add_flow_edges(edges)
         return G

@@ -7,14 +7,15 @@ from plyze.qoi.registries.interfaces import GenericQOI
 
 
 def zone_inflow(node_1_2_flow: list[xr.DataArray]) -> xr.DataArray:
-    # TODO: assert that all have the same vals..
-    # dt = [i.]
-    return sum(node_1_2_flow)  # pyright: ignore[reportReturnType]
+    res = sum(node_1_2_flow)
+    assert isinstance(res, xr.DataArray)
+    return res
 
 
 def zone_outflow(node_2_1_flow: list[xr.DataArray]) -> xr.DataArray:
-    # TODO: check that the nodes are aligned!
-    return sum(node_2_1_flow)  # pyright: ignore[reportReturnType]
+    res = sum(node_2_1_flow)
+    assert isinstance(res, xr.DataArray)
+    return res
 
 
 def zone_dimless_flow(

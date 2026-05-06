@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from loguru import logger
-from plyze.flow_graph.interfaces import FlowGraph, ZoneNode
+from plyze.flow_graph.interfaces import AmbientData, FlowGraph, ZoneNode
 from plyze.qoi_flow_graph.graph_qoi_interfaces import (
     GraphQOIBaseCalculator,
     GraphQOIRegistry,
@@ -12,6 +12,7 @@ class GraphQOICalculator(GraphQOIBaseCalculator):
     # NOTE: this is calculated on a per-zone level and will be added to the original graph.. which means it merits being added to the original flow_graph folder..; and mybe should do all QOIs this way, not just those that are calculated..
     G: FlowGraph
     zone: ZoneNode
+    ambient_data: AmbientData
 
     @property
     def zone_edges(self):
@@ -44,14 +45,14 @@ class GraphQOICalculator(GraphQOIBaseCalculator):
         self.register(
             GraphQOIRegistry.zone_dimless_flow,
             GraphQOIRegistry.zone_dimless_flow.fx(
-                self.G.ambient_data.wind_speed, in_flow, surface_areas
+                self.ambient_data.wind_speed, in_flow, surface_areas
             ),
         )
 
         self.register(
             GraphQOIRegistry.zone_dimless_temp,
             GraphQOIRegistry.zone_dimless_temp.fx(
-                self.G.ambient_data.t_out, self.zone.data.temperature
+                self.ambient_data.t_out, self.zone.data.temperature
             ),
         )
 
