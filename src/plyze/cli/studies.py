@@ -15,7 +15,7 @@ from plyze.examples.casedata import example_casedata, example_times
 from plyze.paths import ProjectPaths
 from plyze.plots.altair_helpers import AltairRenderers
 from plyze.plots.theme import default_theme
-from plyze.qoi_flow_graph.zone_data import collate_zone_data_to_df
+from plyze.qoi_flow_graph.zone_data import collate_ambient_data, collate_zone_data_to_df
 
 app = App()
 
@@ -50,6 +50,8 @@ def ad():
 
 @app.command
 def fg():
+    ambient_data = make_ambient_data(example_casedata.sql, example_times)
+    return collate_ambient_data(ambient_data)
     G = FlowGraphModel.read(path=ProjectPaths.sample_flow_graph_json)
     # zone = G.zone_nodes[-1]
 

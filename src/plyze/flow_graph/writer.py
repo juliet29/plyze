@@ -21,16 +21,6 @@ class GraphPath(NamedTuple):
     def make_json_path(self, folder_name: str):
         return Path(folder_name) / self.object_name / f"{self.qoi_name}.nc"
 
-    # def make_save_path(self, root: Path, folder_name: str):
-    #     res = root / self.make_json_path(folder_name)
-    #     logger.debug(res)
-    #     return res
-    #
-
-
-# def make_paths(keys: tuple[str, ...], object_name: str, folder_name: str):
-#     return {k: GraphPath(object_name, k).make_json_path(folder_name) for k in keys}
-
 
 class ZoneComputedDataPaths(NamedTuple):
     zone_inflow: Path

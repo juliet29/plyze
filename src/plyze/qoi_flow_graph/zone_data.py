@@ -2,6 +2,7 @@ from typing import Callable, TypeVar, get_args
 import polars as pl
 from plyze.qoi.xarray_helpers import convert_xarray_to_polars
 from plyze.flow_graph.interfaces import (
+    AmbientData,
     Edge,
     ExternalNode,
     FlowGraph,
@@ -44,6 +45,12 @@ def collate_zone_data_to_df(G: FlowGraph, afn_nodes_only: bool = True):
     df = pl.concat(dfs, how="align")
 
     return df
+
+
+def collate_ambient_data(data: AmbientData):
+    dict_ = data._asdict()
+    dfs = [convert_xarray_to_polars(v, name=k) for k, v in dict_.items()]
+    return pl.concat(dfs, how="align")
 
 
 # More QOIS -> not stored on the nodes # TODO: add to QOI registry?
