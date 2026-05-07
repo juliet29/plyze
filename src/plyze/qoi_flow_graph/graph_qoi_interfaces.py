@@ -1,9 +1,11 @@
 from pathlib import Path
 from typing import Callable, NamedTuple, Generic, ParamSpec, TypeVar
+from loguru import logger
 import xarray as xr
 from dataclasses import dataclass, field
 
 from plyze.qoi.registries.interfaces import GenericQOI
+from plyze.utils import XArrayNames
 
 
 def zone_inflow(node_1_2_flow: list[xr.DataArray]) -> xr.DataArray:
@@ -91,8 +93,14 @@ class GraphQOIHolder:
 @dataclass
 class GraphQOIBaseCalculator:
     holder: GraphQOIHolder
+    name: str
 
     def register(self, graph_qoi: GraphQOI, value: xr.DataArray):
+        try:
+            value[XArrayNames.SPACE] = self.name
+        except ValueError as e:
+            raise Exception(f"Could not set name for {graph_qoi.name} -> {e}")
+        logger.debug(f"Updated xarray space name {value.space_names}")
         self.holder.update(graph_qoi, value)
 
     def calculate(self, functions: list[Callable]):

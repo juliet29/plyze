@@ -6,7 +6,18 @@ from utils4plans.sets import set_equality
 import xarray as xr
 from plan2eplus.geometry.coords import Coord
 
-ZoneNodeQOINames = Literal["mixing_volume", "ventilation_volume", "temperature"]
+from plyze.qoi.xarray_helpers import get_data
+from plyze.utils import XArrayNames
+
+ZoneNodeQOINames = Literal[
+    "mixing_volume",
+    "ventilation_volume",
+    "temperature",
+    "zone_inflow",
+    "zone_outflow",
+    "zone_dimless_flow",
+    "zone_dimless_temp",
+]
 
 
 class AmbientData(NamedTuple):
@@ -33,8 +44,16 @@ class ZoneNodeData:
     temperature: xr.DataArray
     computed_data: ZoneComputedData | None = None
 
+    @property
+    def idf_name(self):
+        return get_data(self.temperature[XArrayNames.SPACE])
+
     def get_qoi_array(self, name: ZoneNodeQOINames):
-        val = self.__dict__[name]
+        try:
+            val = self.__dict__[name]
+        except KeyError:
+            assert self.computed_data
+            val = self.computed_data._asdict()[name]
         assert isinstance(val, xr.DataArray)
         return val
 

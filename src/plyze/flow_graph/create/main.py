@@ -22,7 +22,7 @@ def make_ambient_data(sql: Path, dt: list[datetime] = []):
     QRS = QOIRegistry.site
     ambient_data = AmbientData(
         *[
-            QOIandData(i, sql).original_arr
+            QOIandData(i, sql).original_arr.squeeze()
             for i in [QRS.t_out, QRS.wind_speed, QRS.wind_direction]
         ]
     )
@@ -33,7 +33,9 @@ def make_ambient_data(sql: Path, dt: list[datetime] = []):
 
 def update_zone_qois(G: FlowGraph, ambient_data: AmbientData):
     def update(zone: ZoneNode):
-        new_qoi_calculator = GraphQOICalculator(GraphQOIHolder(), G, zone, ambient_data)
+        new_qoi_calculator = GraphQOICalculator(
+            GraphQOIHolder(), zone.data.idf_name, G, zone, ambient_data
+        )
         new_qoi_calculator.run()
         holder = new_qoi_calculator.holder.holder_dict
         # TODO: in-place transformation could be cleaned up..

@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 import xarray as xr
-from loguru import logger
 from plyze.flow_graph.interfaces import AmbientData, FlowGraph, ZoneNode
 from plyze.qoi_flow_graph.graph_qoi_interfaces import (
     GraphQOIBaseCalculator,
@@ -19,8 +18,6 @@ class GraphQOICalculator(GraphQOIBaseCalculator):
     def zone_edges(self):
         # TODO: test that can get the correct edges..
         edges = self.G.get_edges_of_zone(self.zone)
-        logger.debug(edges)
-        # logger.debug(type(edges[0]))
         e = [i for i in self.G.edges_with_data if i in edges]
         return e
 

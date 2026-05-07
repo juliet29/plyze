@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import NamedTuple, TypeVar
 from pathlib import Path
 
-from loguru import logger
 
 from plyze.flow_graph.interfaces import (
     Edge,
@@ -75,7 +74,6 @@ def make_paths(
     ]
     json_paths: _T = ntup(*values)  # type: ignore[call-arg]
     root_paths: _T = ntup(*[root / i for i in json_paths])  # type: ignore[call-arg]
-    logger.debug(root_paths)
     make_parent_paths(root_paths[0])
     return json_paths, root_paths
 

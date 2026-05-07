@@ -41,4 +41,3 @@ class QOIMetricRegistry:
 class MetricRegistry:
     flow = FlowMetricRegistry
     plan = PlanMetricRegistry
-    qoi = QOIMetricRegistry
