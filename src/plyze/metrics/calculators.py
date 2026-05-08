@@ -41,6 +41,9 @@ class FlowMetricsCalculator(BaseCalculator):
 
     def calc_length_metrics(self):
         lengths = [len(i) for i in self.paths]
+        # NOTE: this is a tempoerary fix, if there are no paths, then something is wrong with the graph..
+        if not lengths:
+            lengths = [0]
 
         self.register(FMR.avg_path_length, statistics.mean(lengths))
 

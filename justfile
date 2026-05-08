@@ -1,8 +1,7 @@
 
 push-tag end:
-  # git commit -m "about to push development tag {{end}}" -n
-  # git push
-  
+  @echo "Have you pushed the code you want this number to reflect?" 
+  @read status;
   git tag -a s0.1.{{end}} -m s0.1.{{end}}
   git push --tag
 
