@@ -17,7 +17,7 @@ from cyclopts import Parameter
 @dataclass
 class TimeSelection:
     year: int
-    month: Annotated[list[int] | int, Parameter(consume_multiple=True)]
+    month: Annotated[list[int], Parameter(consume_multiple=True)]
     days: Annotated[list[int], Parameter(consume_multiple=True)]
     hours: Annotated[list[int], Parameter(consume_multiple=True)]
     listwise: bool = False
@@ -35,10 +35,10 @@ class TimeSelection:
                 for m, d, h in zip(self.month, self.days, self.hours)
             ]
         else:
-            assert isinstance(self.month, int)
+            assert len(self.month) == 1
 
             datetimes = [
-                datetime(year=self.year, month=self.month, day=i, hour=j)
+                datetime(year=self.year, month=self.month[0], day=i, hour=j)
                 for i, j in product(self.days, self.hours)
             ]
 
