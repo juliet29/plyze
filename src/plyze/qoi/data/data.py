@@ -17,19 +17,30 @@ from cyclopts import Parameter
 @dataclass
 class TimeSelection:
     year: int
-    month: int
+    month: Annotated[list[int] | int, Parameter(consume_multiple=True)]
     days: Annotated[list[int], Parameter(consume_multiple=True)]
     hours: Annotated[list[int], Parameter(consume_multiple=True)]
+    listwise: bool = False
 
     def __post_init__(self):
         if not self.hours:
             self.hours = list(range(0, 24))
 
     def calc_datetimes(self):
-        datetimes = [
-            datetime(year=self.year, month=self.month, day=i, hour=j)
-            for i, j in product(self.days, self.hours)
-        ]
+        if self.listwise:
+            assert isinstance(self.month, list)
+            assert len(self.month) == len(self.hours) == len(self.days)
+            datetimes = [
+                datetime(year=self.year, month=m, day=d, hour=h)
+                for m, d, h in zip(self.month, self.days, self.hours)
+            ]
+        else:
+            assert isinstance(self.month, int)
+
+            datetimes = [
+                datetime(year=self.year, month=self.month, day=i, hour=j)
+                for i, j in product(self.days, self.hours)
+            ]
 
         return datetimes
 
