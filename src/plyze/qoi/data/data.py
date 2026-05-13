@@ -20,7 +20,7 @@ class TimeSelection:
     month: Annotated[list[int], Parameter(consume_multiple=True)]
     days: Annotated[list[int], Parameter(consume_multiple=True)]
     hours: Annotated[list[int], Parameter(consume_multiple=True)]
-    listwise: bool = False
+    listwise: bool
 
     def __post_init__(self):
         if not self.hours:
