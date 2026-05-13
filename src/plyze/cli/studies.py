@@ -15,6 +15,7 @@ from plyze.examples.casedata import example_casedata, example_times
 from plyze.paths import ProjectPaths
 from plyze.plots.altair_helpers import AltairRenderers
 from plyze.plots.theme import default_theme
+from plyze.qoi.data.data import TimeSelection
 from plyze.qoi_flow_graph.zone_data import collate_ambient_data, collate_zone_data_to_df
 
 app = App()
@@ -44,8 +45,8 @@ def make_flow_graph_example():
 
 
 @app.command
-def ad():
-    return make_ambient_data(example_casedata.sql)
+def ad(ts: TimeSelection):
+    return ts.calc_datetimes()
 
 
 @app.command
