@@ -1,3 +1,5 @@
+from plan2eplus.ezcase.ez import logger
+import numpy as np
 import polars as pl
 from datetime import datetime
 import xarray as xr
@@ -31,8 +33,38 @@ def get_data_by_space_name(arr: xr.DataArray, name: str):
         raise Exception(f"Could not find data for {name} in {arr}")
 
 
+def make_dt_str(val: datetime | np.datetime64):
+    FORMAT = "%m/%d/%y - %H"
+    if isinstance(val, datetime):
+        res = datetime.strftime(val, FORMAT)
+    else:
+        res = datetime.strftime(
+            val.item(), FORMAT  # pyright: ignore[reportArgumentType]
+        )
+    return res
+
+
+def log_datetimes(dt: list[datetime] | list[np.datetime64]):
+    final = [make_dt_str(i) for i in dt]
+    logger.debug(final)
+
+
 def select_time(arr: xr.DataArray, dt: datetime | list[datetime]):
     assert XArrayNames.DATETIME in arr.dims
+
+    # curr_times = [i for i in arr[XArrayNames.DATETIME].data]
+    # if isinstance(dt, list):
+    #     log_datetimes([curr_times[0], curr_times[-1]])
+    #     log_datetimes(dt)
+    #
+    #     time_overlap = set_intersection(curr_times, dt)
+    #     diff = set_difference(curr_times, dt)
+    #     logger.debug((len(curr_times), len(dt)))
+    #     logger.debug(len(time_overlap))
+    #     logger.debug(len(diff))
+    #
+    # log_datetimes(time_overlap)
+    # log_datetimes(diff)
     return arr.sel(datetimes=dt)
 
 

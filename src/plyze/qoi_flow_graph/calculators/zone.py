@@ -1,10 +1,8 @@
 from dataclasses import dataclass
 import xarray as xr
 from plyze.flow_graph.interfaces import AmbientData, FlowGraph, ZoneNode
-from plyze.qoi_flow_graph.graph_qoi_interfaces import (
-    GraphQOIBaseCalculator,
-    GraphQOIRegistry,
-)
+from plyze.qoi_flow_graph.interfaces import GraphQOIBaseCalculator
+from plyze.qoi_flow_graph.registry import GraphQOIRegistry
 
 
 @dataclass()

@@ -1,8 +1,9 @@
 import altair as alt
+from plan2eplus.ezcase.ez import EZ
+from plyze.flow_graph.create.external_node import make_external_nodes
 from plyze.flow_graph.io import FlowGraphModel
 from rich.pretty import pretty_repr
 from plyze.flow_graph.create.main import (
-    make_ambient_data,
     make_flow_graph,
 )
 
@@ -15,8 +16,8 @@ from plyze.examples.casedata import example_casedata, example_times
 from plyze.paths import ProjectPaths
 from plyze.plots.altair_helpers import AltairRenderers
 from plyze.plots.theme import default_theme
-from plyze.qoi.data.data import TimeSelection
-from plyze.qoi_flow_graph.zone_data import collate_ambient_data, collate_zone_data_to_df
+from plyze.qoi_flow_graph.calculators.plan import PlanQOICalculator
+from plyze.qoi_flow_graph.interfaces import GraphQOIHolder
 
 app = App()
 
@@ -45,25 +46,24 @@ def make_flow_graph_example():
 
 
 @app.command
-def ad(ts: TimeSelection):
-    return ts.calc_datetimes()
+def ad():
+    case = EZ(example_casedata.idf)
+    res = make_external_nodes(
+        case, example_casedata.sql, cardinal_expansion_factor=1.1, dt=example_times
+    )
+    return
 
 
 @app.command
 def fg():
-    ambient_data = make_ambient_data(example_casedata.sql, example_times)
-    return collate_ambient_data(ambient_data)
     G = FlowGraphModel.read(path=ProjectPaths.sample_flow_graph_json)
-    # zone = G.zone_nodes[-1]
+    holder = GraphQOIHolder()
+    pq = PlanQOICalculator(holder, "", G)
+    pq.run()
 
-    # return zone
+    # TODO: think if the name is needed for the calculator alwayss...
 
-    res = collate_zone_data_to_df(G)
-    return res
-    # ambient_data = make_ambient_data(example_casedata.sql, example_times)
-    # res = update_zone_qois(G, ambient_data)
-    # zone = G.zone_nodes[-1]
-    # return GraphQOICalculator(GraphQOIHolder(), G, zone).zone_edges
+    return pq.holder.holder_dict
 
 
 ### ------- END COMMANDS ---------

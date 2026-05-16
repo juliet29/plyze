@@ -16,6 +16,10 @@ def make_edge_from_surface(
     afn_surface: Subsurface | Airboundary, flow_in: xr.DataArray, flow_out: xr.DataArray
 ):
     e = afn_surface.edge
+    if isinstance(afn_surface, Subsurface):
+        surface_type = afn_surface.subsurface_type
+    else:
+        surface_type = "Airboundary"
     return Edge(
         e.space_a,
         e.space_b,
@@ -24,6 +28,7 @@ def make_edge_from_surface(
             flow_in=get_data_by_space_name(flow_in, afn_surface.name),
             flow_out=get_data_by_space_name(flow_out, afn_surface.name),
             surface_area=afn_surface.domain.area,
+            surface_type=surface_type,
         ),
     )
 

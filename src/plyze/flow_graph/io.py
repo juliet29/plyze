@@ -1,4 +1,5 @@
-from typing import Sequence
+from typing import Literal, Sequence
+from plan2eplus.ops.subsurfaces.ezobject import SubsurfaceType
 import xarray as xr
 from plan2eplus.geometry.coords import Coord
 from pydantic import BaseModel
@@ -134,6 +135,7 @@ class EdgeDataModel(BaseModel):
     flow_in: Path
     flow_out: Path
     surface_area: float
+    surface_type: SubsurfaceType | Literal["Airboundary"]
 
 
 class EdgeModel(BaseModel):
@@ -151,6 +153,7 @@ class EdgeModel(BaseModel):
                 flow_in=paths.flow_in,
                 flow_out=paths.flow_out,
                 surface_area=edge.data.surface_area,
+                surface_type=edge.data.surface_type,
             ),
         )
 
@@ -162,6 +165,7 @@ class EdgeModel(BaseModel):
                 flow_in=open_xarray(root_path, self.data.flow_in),
                 flow_out=open_xarray(root_path, self.data.flow_out),
                 surface_area=self.data.surface_area,
+                surface_type=self.data.surface_type,
             ),
         )
 

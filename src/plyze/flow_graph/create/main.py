@@ -13,8 +13,8 @@ from plyze.flow_graph.interfaces import (
 from plyze.qoi.data.interfaces import QOIandData
 from plyze.qoi.registries.main import QOIRegistry
 from plyze.qoi.xarray_helpers import select_time
-from plyze.qoi_flow_graph.graph_qoi import GraphQOICalculator
-from plyze.qoi_flow_graph.graph_qoi_interfaces import GraphQOIHolder
+from plyze.qoi_flow_graph.calculators.zone import GraphQOICalculator
+from plyze.qoi_flow_graph.interfaces import GraphQOIHolder
 from plyze.utils import CaseData
 
 

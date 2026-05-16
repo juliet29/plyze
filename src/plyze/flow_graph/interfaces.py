@@ -2,6 +2,7 @@ from typing import Any, Hashable, Literal, NamedTuple, Sequence, TypeVar
 from dataclasses import dataclass
 
 import networkx as nx
+from plan2eplus.ops.subsurfaces.ezobject import SubsurfaceType
 from utils4plans.sets import set_equality
 import xarray as xr
 from plan2eplus.geometry.coords import Coord
@@ -92,6 +93,7 @@ class EdgeData(NamedTuple):
     flow_in: xr.DataArray
     flow_out: xr.DataArray
     surface_area: float
+    surface_type: SubsurfaceType | Literal["Airboundary"]
 
 
 class Edge(NamedTuple):
