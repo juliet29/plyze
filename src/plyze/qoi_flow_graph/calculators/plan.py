@@ -65,13 +65,14 @@ class PlanQOICalculator(GraphQOIBaseCalculator):
         self.register(GraphQOIRegistry.plan_inflow, self.inflow)
         self.register(GraphQOIRegistry.plan_outflow, self.outflow)
         self.register(GraphQOIRegistry.plan_flow_loss, self.flow_diff)
+        self.register(GraphQOIRegistry.plan_dimless_inflow, self.dimless_flow)
 
     def run(self):
         self.calculate([self.make_registers])
 
 
-def make_plan_qois(G: FlowGraph):
+def make_plan_qois(G: FlowGraph, ambient_data: AmbientData):
     holder = GraphQOIHolder()
-    pq = PlanQOICalculator(holder, "", G)
+    pq = PlanQOICalculator(holder, "", G, ambient_data)
     pq.run()
     return holder
