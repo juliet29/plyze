@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 import xarray as xr
-from plyze.flow_graph.interfaces import FlowGraph
+from plyze.flow_graph.interfaces import AmbientData, FlowGraph
 from plyze.qoi_flow_graph.registry import GraphQOIRegistry
 from plyze.qoi_flow_graph.interfaces import (
     GraphQOIBaseCalculator,
+    GraphQOIHolder,
 )
 from plyze.utils import XArrayNames
 
@@ -11,6 +12,7 @@ from plyze.utils import XArrayNames
 @dataclass()
 class PlanQOICalculator(GraphQOIBaseCalculator):
     G: FlowGraph
+    ambient_data: AmbientData
 
     @property
     def empty_data(self):
@@ -30,19 +32,28 @@ class PlanQOICalculator(GraphQOIBaseCalculator):
             i.data.flow_in.drop_vars(XArrayNames.SPACE)
             for i in self.ventilating_surfaces
         ]
-        return GraphQOIRegistry.zone_inflow.fx(flows)
+        return GraphQOIRegistry.plan_inflow.fx(flows)
 
     @property
     def outflow(self):
         if not self.ventilating_surfaces:
             return self.empty_data
         flows = [i.data.flow_out for i in self.ventilating_surfaces]
-        return GraphQOIRegistry.zone_outflow.fx(flows)
+        return GraphQOIRegistry.plan_outflow.fx(flows)
 
     @property
     def flow_diff(self):
         return GraphQOIRegistry.plan_flow_loss.fx(
             inflow=self.inflow, outflow=self.outflow
+        )
+
+    @property
+    def dimless_flow(self):
+        surface_areas = [i.data.surface_area for i in self.ventilating_surfaces]
+        return GraphQOIRegistry.plan_dimless_inflow.fx(
+            wind_speed=self.ambient_data.wind_speed,
+            zone_sum_flow=self.inflow,
+            surface_areas=surface_areas,
         )
 
     def pressure_diff(self):
@@ -51,9 +62,16 @@ class PlanQOICalculator(GraphQOIBaseCalculator):
         return GraphQOIRegistry.plan_max_pressure_diff.fx(pressure_data)
 
     def make_registers(self):
-        self.register(GraphQOIRegistry.zone_inflow, self.inflow)
-        self.register(GraphQOIRegistry.zone_outflow, self.outflow)
+        self.register(GraphQOIRegistry.plan_inflow, self.inflow)
+        self.register(GraphQOIRegistry.plan_outflow, self.outflow)
         self.register(GraphQOIRegistry.plan_flow_loss, self.flow_diff)
 
     def run(self):
         self.calculate([self.make_registers])
+
+
+def make_plan_qois(G: FlowGraph):
+    holder = GraphQOIHolder()
+    pq = PlanQOICalculator(holder, "", G)
+    pq.run()
+    return holder

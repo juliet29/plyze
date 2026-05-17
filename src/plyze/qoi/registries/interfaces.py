@@ -15,7 +15,7 @@ class GenericQOI:
     name: str
     nickname: str
     unit: str
-    space_type: SpaceTypesLiteral
+    space_type: SpaceTypesLiteral | Literal["Plan"]
     info: str = ""
 
     @property

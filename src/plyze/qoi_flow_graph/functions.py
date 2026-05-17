@@ -19,7 +19,7 @@ def outflow(node_2_1_flow: list[xr.DataArray]) -> xr.DataArray:
     return res
 
 
-def zone_dimless_flow(
+def dimless_flow(
     wind_speed: xr.DataArray, zone_sum_flow: xr.DataArray, surface_areas: list[float]
 ):
     sum_areas = sum(surface_areas)

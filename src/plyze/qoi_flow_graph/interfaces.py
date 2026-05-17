@@ -30,11 +30,13 @@ class GraphQOIHolder:
         self.holder_dict[graph_qoi.nickname] = value
 
     def write(self, path: Path):
-        pass
+        dsj = {k: v.drop_vars("space_names") for k, v in self.holder_dict.items()}
+        ds = xr.Dataset(dsj)
+        ds.to_netcdf(path)
 
     @classmethod
     def read(cls, path: Path):
-        pass
+        return xr.open_dataset(path)
 
 
 @dataclass
