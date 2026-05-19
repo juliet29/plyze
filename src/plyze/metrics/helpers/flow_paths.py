@@ -1,7 +1,7 @@
 from plyze.flow_graph.interfaces import ExternalNode, FlowGraph
 from loguru import logger
 from rich.pretty import pretty_repr
-from plyze.metrics.dominant_external_node import separate_dominant_nodes
+from plyze.metrics.helpers.dominant_external_node import separate_dominant_nodes
 import networkx as nx
 
 

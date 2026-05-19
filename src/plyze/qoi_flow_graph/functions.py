@@ -22,6 +22,20 @@ def outflow(node_2_1_flow: list[xr.DataArray]) -> xr.DataArray:
 def dimless_flow(
     wind_speed: xr.DataArray, zone_sum_flow: xr.DataArray, surface_areas: list[float]
 ):
+
+    # with logger.contextualize(data="wind_speed"):
+    #     logger.debug(f"{wind_speed.datetimes}")
+    #     # log_datetimes(wind_speed.datetimes.data)
+    #
+    # with logger.contextualize(data="zone_sum_flow"):
+    #     try:
+    #         log_datetimes(zone_sum_flow.datetimes.data)
+    #     except:
+    #         logger.debug(zone_sum_flow)
+    #         logger.debug(f"{zone_sum_flow.datetimes}")
+    # # logger.debug(zone_sum_flow)
+    # # logger.debug(surface_areas)
+    # raise Exception("About to hit a snag")
     sum_areas = sum(surface_areas)
     return zone_sum_flow / (sum_areas * wind_speed)
 

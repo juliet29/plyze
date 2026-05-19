@@ -1,4 +1,7 @@
+from pathlib import Path
 from typing import Callable, TypeVar, get_args
+from loguru import logger
+import polars.selectors as cs
 import polars as pl
 from plyze.qoi.xarray_helpers import convert_xarray_to_polars
 from plyze.flow_graph.interfaces import (
@@ -47,10 +50,31 @@ def collate_zone_data_to_df(G: FlowGraph, afn_nodes_only: bool = True):
     return df
 
 
+# TODO: this may need a different location for the AmbientData..
 def collate_ambient_data(data: AmbientData):
     dict_ = data._asdict()
     dfs = [convert_xarray_to_polars(v, name=k) for k, v in dict_.items()]
     return pl.concat(dfs, how="align")
+
+
+def read_ambient_data(ambient_path: Path):
+    # TODO: this is duplicated in nvflow and that should be avoided.. (logic for overriding times..)
+    df = (
+        pl.read_csv(
+            ambient_path, schema_overrides={XArrayNames.DATETIME: pl.Datetime("us")}
+        )
+        .sort(XArrayNames.DATETIME)
+        .unique(XArrayNames.DATETIME)
+    )
+    logger.debug(df.shape)
+    datetimes = df.get_column(XArrayNames.DATETIME).to_numpy()
+    data = df.select(cs.float()).to_dict()
+    da = {
+        k: xr.DataArray(data=v, coords={XArrayNames.DATETIME: datetimes})
+        for k, v in data.items()
+    }
+
+    return AmbientData(**da)
 
 
 # More QOIS -> not stored on the nodes # TODO: add to QOI registry?

@@ -1,4 +1,4 @@
-from plyze.fpviz.main import plan_plot
+from plyze.plots.fpviz import plan_plot
 from plyze.paths import ProjectPaths
 
 

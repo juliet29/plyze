@@ -32,14 +32,18 @@ class PlanQOICalculator(GraphQOIBaseCalculator):
             i.data.flow_in.drop_vars(XArrayNames.SPACE)
             for i in self.ventilating_surfaces
         ]
-        return GraphQOIRegistry.plan_inflow.fx(flows)
+        return GraphQOIRegistry.plan_inflow.fx(flows).drop_duplicates(
+            dim=XArrayNames.DATETIME
+        )
 
     @property
     def outflow(self):
         if not self.ventilating_surfaces:
             return self.empty_data
         flows = [i.data.flow_out for i in self.ventilating_surfaces]
-        return GraphQOIRegistry.plan_outflow.fx(flows)
+        return GraphQOIRegistry.plan_outflow.fx(flows).drop_duplicates(
+            dim=XArrayNames.DATETIME
+        )
 
     @property
     def flow_diff(self):
@@ -50,9 +54,16 @@ class PlanQOICalculator(GraphQOIBaseCalculator):
     @property
     def dimless_flow(self):
         surface_areas = [i.data.surface_area for i in self.ventilating_surfaces]
+        wind = self.ambient_data.wind_speed
+        inflow = self.inflow
+        inflow.name = "inflow"
+
+        res = xr.merge(
+            [inflow, wind],
+        )
         return GraphQOIRegistry.plan_dimless_inflow.fx(
-            wind_speed=self.ambient_data.wind_speed,
-            zone_sum_flow=self.inflow,
+            wind_speed=res.wind_speed,
+            zone_sum_flow=res.inflow,
             surface_areas=surface_areas,
         )
 

@@ -1,5 +1,5 @@
 from plyze.flow_graph.create.main import make_flow_graph
-from plyze.metrics.flow_paths import create_flow_paths, create_st_graph
+from plyze.metrics.helpers.flow_paths import create_flow_paths, create_st_graph
 
 
 from plyze.examples.casedata import example_casedata, example_times

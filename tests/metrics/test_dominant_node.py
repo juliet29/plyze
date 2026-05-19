@@ -1,6 +1,6 @@
 from plyze.flow_graph.create.main import make_flow_graph
 from plyze.examples.casedata import example_casedata, example_times
-from plyze.metrics.dominant_external_node import (
+from plyze.metrics.helpers.dominant_external_node import (
     calc_dominant_node,
     get_max_wind_pressure_at_time,
     separate_dominant_nodes,

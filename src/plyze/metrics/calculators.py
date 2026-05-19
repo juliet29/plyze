@@ -1,10 +1,14 @@
 from dataclasses import dataclass
+from typing import get_args
 import networkx as nx
+from plan2eplus.geometry.contact_points import CardinalEntries
+from utils4plans.lists import chain_flatten
 
 from plyze.flow_graph.interfaces import FlowGraph
-from plyze.metrics.dominant_external_node import separate_dominant_nodes
-from plyze.metrics.flow_paths import create_flow_paths
+from plyze.metrics.helpers.dominant_external_node import separate_dominant_nodes
+from plyze.metrics.helpers.flow_paths import create_flow_paths
 import statistics
+from plyze.metrics.helpers.facade_groups import FACADE_GROUPS
 from plyze.metrics.interfaces import BaseCalculator, MetricHolder
 from plyze.metrics.registries import MetricRegistry
 
@@ -18,6 +22,20 @@ class PlanMetricsCalculator(BaseCalculator):
     def calc_length_metrics(self):
         self.register(PMR.area, sum([i.data.area for i in self.G.zone_nodes]))
         self.register(PMR.num_rooms, len(self.G.zone_names))
+
+    def calculate_facades(self):
+        window_edges = [
+            i for i in self.G.edges_with_data if i.data.surface_type == "Window"
+        ]
+        edge_values = chain_flatten([[i.u, i.v] for i in window_edges])
+        cardinal_values = set(
+            [i for i in edge_values if i in get_args(CardinalEntries)]
+        )
+        cardinal_intials = frozenset([i[0].upper() for i in cardinal_values])
+        # logger.debug(cardinal_intials)
+        # logger.debug(FACADE_GROUPS[cardinal_intials])
+        facade_group = FACADE_GROUPS[cardinal_intials]
+        self.register(PMR.facades_with_windows, facade_group)
 
     def run(self):
         self.calculate([self.calc_length_metrics])
