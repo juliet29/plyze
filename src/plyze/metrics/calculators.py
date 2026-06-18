@@ -32,13 +32,11 @@ class PlanMetricsCalculator(BaseCalculator):
             [i for i in edge_values if i in get_args(CardinalEntries)]
         )
         cardinal_intials = frozenset([i[0].upper() for i in cardinal_values])
-        # logger.debug(cardinal_intials)
-        # logger.debug(FACADE_GROUPS[cardinal_intials])
         facade_group = FACADE_GROUPS[cardinal_intials]
-        self.register(PMR.facades_with_windows, facade_group)
+        self.register(PMR.facades_window_group, facade_group)
 
     def run(self):
-        self.calculate([self.calc_length_metrics])
+        self.calculate([self.calc_length_metrics, self.calculate_facades])
 
 
 @dataclass

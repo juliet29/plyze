@@ -4,7 +4,7 @@ from plyze.metrics.interfaces import Metric
 class PlanMetricRegistry:
     area = Metric("area", "Area [m2]")
     num_rooms = Metric("num_rooms", "Number of Rooms")
-    facades_with_windows = Metric("facades_with_windows", "Facades with Windows")
+    facades_window_group = Metric("facades_window_group", "Facade Groups")
 
 
 class FlowMetricRegistry:
