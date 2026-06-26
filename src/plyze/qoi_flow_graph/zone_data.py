@@ -1,9 +1,11 @@
 from pathlib import Path
 from typing import Callable, TypeVar, get_args
-from loguru import logger
-import polars.selectors as cs
+
 import polars as pl
-from plyze.qoi.xarray_helpers import convert_xarray_to_polars
+import polars.selectors as cs
+import xarray as xr
+from loguru import logger
+
 from plyze.flow_graph.interfaces import (
     AmbientData,
     Edge,
@@ -13,8 +15,6 @@ from plyze.flow_graph.interfaces import (
     ZoneNodeQOINames,
 )
 from plyze.utils import XArrayNames
-import xarray as xr
-
 
 GraphVal = TypeVar("GraphVal", ZoneNode, ExternalNode, Edge)
 
@@ -30,7 +30,7 @@ def create_flow_graph_xarray(
     return plan_data
 
 
-def collate_zone_data_to_df(G: FlowGraph, afn_nodes_only: bool = True):
+def collate_zone_data(G: FlowGraph, afn_nodes_only: bool = True) -> xr.Dataset:
     def make_df(qoi: ZoneNodeQOINames):
         if afn_nodes_only:
             nodes = [i for i in G.zone_nodes if i.data.is_in_afn]
@@ -40,21 +40,32 @@ def collate_zone_data_to_df(G: FlowGraph, afn_nodes_only: bool = True):
         plan_array = create_flow_graph_xarray(
             lambda x: x.data.get_qoi_array(qoi), nodes
         )
-        return convert_xarray_to_polars(plan_array, name=qoi)
+        plan_array.name = qoi
+        return plan_array
 
     # basically concat and turn into dataframe..
 
-    dfs = [make_df(i) for i in get_args(ZoneNodeQOINames)]
-    df = pl.concat(dfs, how="align")
+    das = [make_df(i) for i in get_args(ZoneNodeQOINames)]
+    ds = xr.merge(das)
+    # ds = xr.Dataset(das)
 
-    return df
+    return ds
 
 
 # TODO: this may need a different location for the AmbientData..
 def collate_ambient_data(data: AmbientData):
-    dict_ = data._asdict()
-    dfs = [convert_xarray_to_polars(v, name=k) for k, v in dict_.items()]
-    return pl.concat(dfs, how="align")
+    lst = []
+    for k, v in data._asdict().items():
+        v.name = k
+        v1 = v.drop_vars(
+            XArrayNames.SPACE
+        )  # TODO: drop_vars at the original creation site
+        lst.append(v1)
+
+    return xr.merge(lst)
+
+    # dfs = [convert_xarray_to_polars(v, name=k) for k, v in dict_.items()]
+    # return pl.concat(dfs, how="align")
 
 
 def read_ambient_data(ambient_path: Path):

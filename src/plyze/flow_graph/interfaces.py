@@ -1,11 +1,11 @@
-from typing import Any, Hashable, Literal, NamedTuple, Sequence, TypeVar
 from dataclasses import dataclass
+from typing import Any, Hashable, Literal, NamedTuple, Sequence, TypeVar
 
 import networkx as nx
-from plan2eplus.ops.subsurfaces.ezobject import SubsurfaceType
-from utils4plans.sets import set_equality
 import xarray as xr
 from plan2eplus.geometry.coords import Coord
+from plan2eplus.ops.subsurfaces.ezobject import SubsurfaceType
+from utils4plans.sets import set_equality
 
 from plyze.qoi.xarray_helpers import get_data
 from plyze.utils import XArrayNames
@@ -121,8 +121,6 @@ FlowNodeType = TypeVar("FlowNodeType", bound=FlowNode)
 
 
 class FlowGraph(nx.Graph):
-
-    # TODO: ambient data
     def add_flow_nodes(self, nodes: list[FlowNodeType]):
         self.add_nodes_from([i.entry for i in nodes])
 
