@@ -1,6 +1,8 @@
 from datetime import datetime
 from pathlib import Path
+
 from plan2eplus.ezcase.ez import EZ
+
 from plyze.flow_graph.create.edge import make_edges_for_graph
 from plyze.flow_graph.create.external_node import make_external_nodes
 from plyze.flow_graph.create.zone import make_zones_for_graph
@@ -15,17 +17,23 @@ from plyze.qoi.registries.main import QOIRegistry
 from plyze.qoi.xarray_helpers import select_time
 from plyze.qoi_flow_graph.calculators.zone import GraphQOICalculator
 from plyze.qoi_flow_graph.interfaces import GraphQOIHolder
-from plyze.utils import CaseData
+from plyze.utils import CaseData, XArrayNames
 
 
 def make_ambient_data(sql: Path, dt: list[datetime] = []):
     QRS = QOIRegistry.site
     ambient_data = AmbientData(
         *[
-            QOIandData(i, sql).original_arr.squeeze()
+            QOIandData(i, sql)
+            .original_arr.squeeze()
+            .reset_coords(
+                names=XArrayNames.SPACE, drop=True
+            )  # squeeze demotes a coordinate with len of one from a dimension to a non-indix coord, while reset_coords with drop = True removes the named coord
             for i in [QRS.t_out, QRS.wind_speed, QRS.wind_direction]
         ]
-    )
+    )  #
+    # logger.debug(ambient_data.t_out)
+    # raise Exception("done getting it!")
     if dt:
         ambient_data = AmbientData(*[select_time(i, dt) for i in ambient_data])
     return ambient_data

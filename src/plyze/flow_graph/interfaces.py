@@ -26,6 +26,11 @@ class AmbientData(NamedTuple):
     wind_speed: xr.DataArray
     wind_direction: xr.DataArray
 
+    # def to_dataset(self):
+    #     d = {k: v for k,v in self._asdict().items()}
+    #     return xr.Dataset()
+    #
+
 
 class ZoneComputedData(NamedTuple):
     zone_inflow: xr.DataArray

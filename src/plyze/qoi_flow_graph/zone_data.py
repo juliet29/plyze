@@ -53,14 +53,13 @@ def collate_zone_data(G: FlowGraph, afn_nodes_only: bool = True) -> xr.Dataset:
 
 
 # TODO: this may need a different location for the AmbientData..
-def collate_ambient_data(data: AmbientData):
-    lst = []
-    for k, v in data._asdict().items():
+def collate_ambient_data(data: AmbientData) -> xr.Dataset:
+    # def handle(da: xr.DataArray):
+    d: dict[str, xr.DataArray] = data._asdict()
+    lst: list[xr.DataArray] = []
+    for k, v in d.items():
         v.name = k
-        v1 = v.drop_vars(
-            XArrayNames.SPACE
-        )  # TODO: drop_vars at the original creation site
-        lst.append(v1)
+        lst.append(v)
 
     return xr.merge(lst)
 
