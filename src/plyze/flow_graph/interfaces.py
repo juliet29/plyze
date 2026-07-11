@@ -121,6 +121,14 @@ class Edge(NamedTuple):
     def entry(self):
         return (self.u, self.v, {"data": self.data})
 
+    @property
+    def as_tuple(self):
+        return (self.u, self.v)
+
+    @property
+    def as_tuple_reverse(self):
+        return (self.v, self.u)
+
 
 FlowNodeType = TypeVar("FlowNodeType", bound=FlowNode)
 
@@ -199,6 +207,10 @@ class FlowGraph(nx.Graph):
         sg = nx.Graph()
         sg.add_nodes_from(self.external_node_names)
         return sg
+
+    @property
+    def sorted_edge_names(self):
+        return sorted([i.as_tuple for i in self.edges_with_data])
 
     def get_edges_of_zone(self, zone: ZoneNode):
         e = self.edges(zone.name)

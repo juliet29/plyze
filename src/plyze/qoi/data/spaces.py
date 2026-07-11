@@ -55,6 +55,8 @@ def create_space_df(idf_path: Path):
     zones = [make_zone(i) for i in case.objects.zones]
     subsurfaces = [make_subsurface(i) for i in case.objects.subsurfaces]
     zdf = pl.DataFrame(zones).pipe(upper_idf_column)
+    if not subsurfaces:
+        return zdf
     sdf = pl.DataFrame(subsurfaces).pipe(upper_idf_column)
     df = pl.concat([zdf, sdf], how="diagonal")
     # TODO: split this for zone and surface spatial information ..
