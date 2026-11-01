@@ -1,11 +1,12 @@
 from typing import NamedTuple
+
 import polars as pl
+from utils4plans.lists import get_unique_one
 
 from plyze.flow_graph.interfaces import ExternalNode
-from plyze.utils import XArrayNames
-from plyze.qoi.xarray_helpers import convert_xarray_to_polars
 from plyze.qoi.registries.main import QOIRegistry
-from utils4plans.lists import get_unique_one
+from plyze.qoi.xarray_helpers import convert_xarray_to_polars
+from plyze.utils import XArrayNames
 
 wp = QOIRegistry.wind_pressure.nickname
 drn = "direction"
@@ -50,11 +51,22 @@ class DistinguishedExternalNodes(NamedTuple):
     other: list[ExternalNode]
 
 
-def separate_dominant_nodes(nodes: list[ExternalNode]):
+def separate_dominant_nodes_based_on_wind_pressure(nodes: list[ExternalNode]):
     df_max = get_max_wind_pressure_at_time(nodes)
     dominant_node_name = calc_dominant_node(df_max)
     dom_node = get_unique_one(nodes, lambda x: x.name == dominant_node_name)
 
     other_nodes = [i for i in nodes if not i.name == dominant_node_name]
+
+    return DistinguishedExternalNodes(dom_node, other_nodes)
+
+
+def separate_dominant_nodes_given(nodes: list[ExternalNode], given_node: str):
+    # df_max = get_max_wind_pressure_at_time(nodes)
+    # dominant_node_name = calc_dominant_node(df_max)
+    assert len(nodes)
+    dom_node = get_unique_one(nodes, lambda x: given_node.lower() in x.name.lower())
+
+    other_nodes = [i for i in nodes if not i.name == dom_node.name]
 
     return DistinguishedExternalNodes(dom_node, other_nodes)

@@ -12,6 +12,7 @@ class FlowMetricRegistry:
     avg_path_length = Metric("avg_path_length", "Average Length of Paths")
     mode_path_length = Metric("mode_path_length", "Most Frequent Length of Paths")
     len_shortest_path = Metric("len_shortest_path", "Length of Shortest Path")
+    len_longest_path = Metric("len_longest_path", "Length of Longest Path")
     degree_dom_node = Metric("degree_dom_node", "Degree of Dominant Node")
 
     dominant_node_direction = Metric(

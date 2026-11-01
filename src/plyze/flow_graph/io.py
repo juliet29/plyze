@@ -1,10 +1,11 @@
+from pathlib import Path
 from typing import Literal, Sequence
-from plan2eplus.ops.subsurfaces.ezobject import SubsurfaceType
+
 import xarray as xr
 from plan2eplus.geometry.coords import Coord
+from plan2eplus.ops.subsurfaces.ezobject import SubsurfaceType
 from pydantic import BaseModel
-from pathlib import Path
-from utils4plans.io import read_json, write_json
+from utils4plans.io import make_dir, read_json, write_json
 
 from plyze.flow_graph.interfaces import (
     Edge,
@@ -200,4 +201,5 @@ class FlowGraphModel(BaseModel):
         model = cls.model_validate(
             {"nodes": zone_nodes + external_nodes, "edges": edges}
         )
-        write_json(model.model_dump(mode="json"), json_path, OVERWRITE=True)
+        make_dir(json_path)
+        write_json(model.model_dump(mode="json"), json_path)

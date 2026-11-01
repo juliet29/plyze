@@ -1,10 +1,16 @@
-from plan2eplus.ezcase.ez import logger
+import re
+from datetime import datetime
+from typing import Literal
+
 import numpy as np
 import polars as pl
-from datetime import datetime
 import xarray as xr
-import re
+from plan2eplus.ezcase.ez import logger
+
 from plyze.utils import XArrayNames
+
+CardinalNames = ["EAST", "SOUTH", "NORTH", "WEST"]
+CardinalNameLiteral = Literal["EAST", "SOUTH", "NORTH", "WEST"]
 
 
 def normalize_xarray_min_max(da: xr.DataArray):
@@ -39,7 +45,8 @@ def make_dt_str(val: datetime | np.datetime64):
         res = datetime.strftime(val, FORMAT)
     else:
         res = datetime.strftime(
-            val.item(), FORMAT  # pyright: ignore[reportArgumentType]
+            val.item(),
+            FORMAT,  # pyright: ignore[reportArgumentType]
         )
     return res
 
