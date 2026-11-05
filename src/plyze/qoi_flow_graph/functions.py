@@ -1,5 +1,5 @@
-from loguru import logger
 import xarray as xr
+from loguru import logger
 
 from plyze.utils import XArrayNames
 
@@ -41,7 +41,7 @@ def dimless_flow(
 
 
 def zone_dimless_temp(t_out: xr.DataArray, zone_t: xr.DataArray):
-    return zone_t / t_out
+    return (zone_t - t_out) / t_out
 
 
 def plan_flow_loss(inflow: xr.DataArray, outflow: xr.DataArray):

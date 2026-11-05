@@ -42,11 +42,19 @@ class FlowMetricsCalculator(BaseCalculator):
 
     @property
     def distinguished_external_nodes(self):
-        nodes = organize_external_nodes(self.G.external_nodes, self.dominant_node_drn)
+        try:
+            nodes = organize_external_nodes(
+                self.G.external_nodes, self.dominant_node_drn
+            )
+        except ValueError:
+            return None
         return nodes
 
     @property
     def paths(self):
+        if not self.distinguished_external_nodes:
+            return []
+
         return create_flow_paths(self.G, self.distinguished_external_nodes)
 
     def calc_num_paths(self):
@@ -54,7 +62,7 @@ class FlowMetricsCalculator(BaseCalculator):
 
     def calc_length_metrics(self):
         lengths = [len(i) for i in self.paths]
-        # NOTE: this is a tempoerary fix, if there are no paths, then something is wrong with the graph..
+
         if not lengths:
             lengths = [0]
 
@@ -67,8 +75,11 @@ class FlowMetricsCalculator(BaseCalculator):
         self.register(FMR.len_longest_path, max(lengths))
 
     def calc_dominant_node_metrics(self):
-        deg = nx.degree(self.G, self.distinguished_external_nodes.main.name)
-        assert isinstance(deg, int)
+        if not self.distinguished_external_nodes:
+            deg = 0
+        else:
+            deg = nx.degree(self.G, self.distinguished_external_nodes.main.name)
+            assert isinstance(deg, int)
         self.register(FMR.degree_dom_node, deg)
 
     def run(self):

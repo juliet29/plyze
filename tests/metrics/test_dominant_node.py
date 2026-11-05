@@ -1,14 +1,13 @@
-from plyze.flow_graph.create.main import make_flow_graph
 from plyze.examples.casedata import example_casedata, example_times
+from plyze.flow_graph.create.main import make_flow_graph
 from plyze.metrics.helpers.dominant_external_node import (
     calc_dominant_node,
     get_max_wind_pressure_at_time,
-    separate_dominant_nodes,
+    separate_dominant_nodes_based_on_wind_pressure,
 )
 
 
 class TestDominantNode:
-
     G = make_flow_graph(example_casedata, 1.1, example_times)
     df_max = get_max_wind_pressure_at_time(G.external_nodes)
 
@@ -20,5 +19,7 @@ class TestDominantNode:
         assert type(dom_node) is str
 
     def test_separate_nodes(self):
-        dist_nodes = separate_dominant_nodes(self.G.external_nodes)
+        dist_nodes = separate_dominant_nodes_based_on_wind_pressure(
+            self.G.external_nodes
+        )
         assert len(dist_nodes.other) == len(self.G.external_nodes) - 1

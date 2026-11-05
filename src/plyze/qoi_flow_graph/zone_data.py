@@ -31,7 +31,7 @@ def create_flow_graph_xarray(
 
 
 def collate_zone_data(G: FlowGraph, afn_nodes_only: bool = True) -> xr.Dataset:
-    def make_df(qoi: ZoneNodeQOINames):
+    def make_da(qoi: ZoneNodeQOINames):
         if afn_nodes_only:
             nodes = [i for i in G.zone_nodes if i.data.is_in_afn]
         else:
@@ -45,7 +45,7 @@ def collate_zone_data(G: FlowGraph, afn_nodes_only: bool = True) -> xr.Dataset:
 
     # basically concat and turn into dataframe..
 
-    das = [make_df(i) for i in get_args(ZoneNodeQOINames)]
+    das = [make_da(i) for i in get_args(ZoneNodeQOINames)]
     ds = xr.merge(das)
     # ds = xr.Dataset(das)
 

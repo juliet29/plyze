@@ -65,7 +65,13 @@ def separate_dominant_nodes_given(nodes: list[ExternalNode], given_node: str):
     # df_max = get_max_wind_pressure_at_time(nodes)
     # dominant_node_name = calc_dominant_node(df_max)
     assert len(nodes)
-    dom_node = get_unique_one(nodes, lambda x: given_node.lower() in x.name.lower())
+
+    try:
+        dom_node = get_unique_one(nodes, lambda x: given_node.lower() in x.name.lower())
+    except AssertionError as e:
+        raise ValueError(
+            f"Matches for {given_node} in {[i.name for i in nodes]} != 1: {e}"
+        )
 
     other_nodes = [i for i in nodes if not i.name == dom_node.name]
 
